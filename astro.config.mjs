@@ -3,6 +3,8 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 export default defineConfig({
+  site: 'https://mai-xiyu.github.io',
+  base: '/OneKeyMiner_Docs',
   redirects: {
     '/': '/zh-cn/',
   },
