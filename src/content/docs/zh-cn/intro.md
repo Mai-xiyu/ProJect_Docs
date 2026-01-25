@@ -20,11 +20,6 @@ description: OneKeyMiner 模组介绍与快速概览
   <img src="https://img.shields.io/badge/Java-21+-orange?style=flat-square" alt="Java Version">
 </p>
 
-<p align="center">
-  <a href="README.md">🇺🇸 English</a> | 
-  <a href="USER_GUIDE.md">📖 使用指南</a> | 
-  <a href="API_DOCS_CN.md">🔧 API 文档</a>
-</p>
 
 ---
 
