@@ -21,11 +21,6 @@ description: Overview of OneKeyMiner mod
   <img src="https://img.shields.io/badge/Java-21+-orange?style=flat-square" alt="Java Version">
 </p>
 
-<p align="center">
-  <a href="README_CN.md">🇨🇳 中文文档</a> | 
-  <a href="USER_GUIDE.md">📖 User Guide</a> | 
-  <a href="API_DOCS_EN.md">🔧 API Documentation</a>
-</p>
 
 ---
 
