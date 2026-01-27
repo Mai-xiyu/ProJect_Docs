@@ -42,7 +42,6 @@ description: 模组开发接口文档
   - [操作统计追踪](#示例-3操作统计追踪)
   - [自定义工具逻辑](#示例-4自定义工具逻辑)
   - [附属模组开发](#示例-5附属模组开发)
-        - [Jade 联动（显示连锁信息）](#示例-6-jade-联动显示连锁信息)
 - [类参考](#类参考)
 - [最佳实践](#最佳实践)
 - [常见问题](#常见问题)
@@ -901,7 +900,101 @@ public class OKMAddonMain {
     }
 }
 ```
+### 示例 6：Jade 联动（显示连锁信息）
 
+在 Jade 中显示最近一次连锁结果（方块数量 + 当前搜索形状）。
+
+**注册插件（Fabric 需添加 entrypoint）：**
+
+```java
+@WailaPlugin
+public class OKMJadePlugin implements IWailaPlugin {
+    @Override
+    public void register(IWailaCommonRegistration registration) {
+        registration.registerBlockDataProvider(OKMChainDataProvider.INSTANCE, BlockEntity.class);
+    }
+
+    @Override
+    public void registerClient(IWailaClientRegistration registration) {
+        registration.registerBlockComponent(OKMChainComponent.INSTANCE, Block.class);
+    }
+}
+```
+
+Fabric entrypoint：
+
+```json
+{
+    "entrypoints": {
+        "jade": ["your.package.OKMJadePlugin"]
+    }
+}
+```
+
+**服务端记录连锁数据：**
+
+```java
+public record ChainStats(int count, String shape) {}
+
+public final class ChainStatsCache {
+    private static final Map<UUID, ChainStats> LAST = new ConcurrentHashMap<>();
+
+    public static void init() {
+        ChainEvents.registerPostActionListener(event -> {
+            var cfg = ConfigManager.getConfig();
+            LAST.put(event.getPlayer().getUUID(),
+                new ChainStats(event.getResult().totalCount(), cfg.shapeMode.name()));
+        });
+    }
+
+    public static ChainStats get(ServerPlayer player) {
+        return LAST.get(player.getUUID());
+    }
+}
+```
+
+**Jade 同步与渲染：**
+
+```java
+public class OKMChainDataProvider implements StreamServerDataProvider<BlockAccessor, ChainStats> {
+    public static final OKMChainDataProvider INSTANCE = new OKMChainDataProvider();
+
+    @Override
+    public @Nullable ChainStats streamData(BlockAccessor accessor) {
+        return ChainStatsCache.get(accessor.getPlayer());
+    }
+
+    @Override
+    public StreamCodec<RegistryFriendlyByteBuf, ChainStats> streamCodec() {
+        return ChainStatsCodec.CODEC;
+    }
+
+    @Override
+    public ResourceLocation getUid() {
+        return new ResourceLocation("onekeyminer", "chain_stats");
+    }
+}
+
+public class OKMChainComponent implements IBlockComponentProvider {
+    public static final OKMChainComponent INSTANCE = new OKMChainComponent();
+
+    @Override
+    public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+        Optional<ChainStats> stats = OKMChainDataProvider.INSTANCE.decodeFromData(accessor);
+        stats.ifPresent(s -> {
+            tooltip.add(Component.literal("连锁数量: " + s.count()));
+            tooltip.add(Component.literal("搜索形状: " + s.shape()));
+        });
+    }
+
+    @Override
+    public ResourceLocation getUid() {
+        return new ResourceLocation("onekeyminer", "chain_stats");
+    }
+}
+```
+
+> 注意：`ChainStats` 的序列化需自行实现 Codec。
 ---
 
 ## 类参考
@@ -1072,103 +1165,6 @@ public void onCommonSetup(FMLCommonSetupEvent event) {
 }
 ```
 
-### 示例 6：Jade 联动（显示连锁信息）
-
-在 Jade 中显示最近一次连锁结果（方块数量 + 当前搜索形状）。
-
-**注册插件（Fabric 需添加 entrypoint）：**
-
-```java
-@WailaPlugin
-public class OKMJadePlugin implements IWailaPlugin {
-    @Override
-    public void register(IWailaCommonRegistration registration) {
-        registration.registerBlockDataProvider(OKMChainDataProvider.INSTANCE, BlockEntity.class);
-    }
-
-    @Override
-    public void registerClient(IWailaClientRegistration registration) {
-        registration.registerBlockComponent(OKMChainComponent.INSTANCE, Block.class);
-    }
-}
-```
-
-Fabric entrypoint：
-
-```json
-{
-    "entrypoints": {
-        "jade": ["your.package.OKMJadePlugin"]
-    }
-}
-```
-
-**服务端记录连锁数据：**
-
-```java
-public record ChainStats(int count, String shape) {}
-
-public final class ChainStatsCache {
-    private static final Map<UUID, ChainStats> LAST = new ConcurrentHashMap<>();
-
-    public static void init() {
-        ChainEvents.registerPostActionListener(event -> {
-            var cfg = ConfigManager.getConfig();
-            LAST.put(event.getPlayer().getUUID(),
-                new ChainStats(event.getResult().totalCount(), cfg.shapeMode.name()));
-        });
-    }
-
-    public static ChainStats get(ServerPlayer player) {
-        return LAST.get(player.getUUID());
-    }
-}
-```
-
-**Jade 同步与渲染：**
-
-```java
-public class OKMChainDataProvider implements StreamServerDataProvider<BlockAccessor, ChainStats> {
-    public static final OKMChainDataProvider INSTANCE = new OKMChainDataProvider();
-
-    @Override
-    public @Nullable ChainStats streamData(BlockAccessor accessor) {
-        return ChainStatsCache.get(accessor.getPlayer());
-    }
-
-    @Override
-    public StreamCodec<RegistryFriendlyByteBuf, ChainStats> streamCodec() {
-        return ChainStatsCodec.CODEC;
-    }
-
-    @Override
-    public ResourceLocation getUid() {
-        return new ResourceLocation("onekeyminer", "chain_stats");
-    }
-}
-
-public class OKMChainComponent implements IBlockComponentProvider {
-    public static final OKMChainComponent INSTANCE = new OKMChainComponent();
-
-    @Override
-    public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
-        Optional<ChainStats> stats = OKMChainDataProvider.INSTANCE.decodeFromData(accessor);
-        stats.ifPresent(s -> {
-            tooltip.add(Component.literal("连锁数量: " + s.count()));
-            tooltip.add(Component.literal("搜索形状: " + s.shape()));
-        });
-    }
-
-    @Override
-    public ResourceLocation getUid() {
-        return new ResourceLocation("onekeyminer", "chain_stats");
-    }
-}
-```
-
-> 注意：`ChainStats` 的序列化需自行实现 Codec。
-
----
 
 ## 常见问题
 
