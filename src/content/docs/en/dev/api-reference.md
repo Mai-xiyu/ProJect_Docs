@@ -42,6 +42,7 @@ description: Developer documentation for OneKeyMiner API
   - [Statistics Tracking](#example-3-statistics-tracking)
   - [Custom Tool Logic](#example-4-custom-tool-logic)
   - [Addon Development](#example-5-addon-development)
+        - [Jade Integration (Show Chain Info)](#example-6-jade-integration-show-chain-info)
 - [Class Reference](#class-reference)
 - [Best Practices](#best-practices)
 - [FAQ](#faq)
@@ -208,6 +209,32 @@ OneKeyMinerAPI.whitelistInteractionTool("#c:shears");
 
 // Add to interaction tool blacklist
 OneKeyMinerAPI.blacklistInteractionTool("mymod:broken_shears");
+```
+
+#### Custom Tool Action Rules
+
+Bind a specific tool to chain actions on blocks or entities, and optionally limit targets:
+
+```java
+// Entity shearing rule (only sheep)
+OneKeyMinerAPI.registerEntityShearingRule(
+    "mymod:golden_shears",
+    "minecraft:sheep"
+);
+
+// Block interaction rule (hoe-like behavior on dirt)
+OneKeyMinerAPI.registerInteractionToolRule(
+    "mymod:terra_hoe",
+    OneKeyMinerAPI.ToolTargetType.BLOCK,
+    OneKeyMinerAPI.InteractionRule.TILLING,
+    "#minecraft:dirt"
+);
+
+// Mining rule (trigger chain mining on right-click for specific blocks)
+OneKeyMinerAPI.registerMiningToolRule(
+    "mymod:ore_wand",
+    "#c:ores"
+);
 ```
 
 #### Plantable Items
@@ -622,7 +649,6 @@ int minHungerLevel = config.minHungerLevel;
 boolean allowBareHand = config.allowBareHand;
 boolean teleportDrops = config.teleportDrops;
 boolean teleportExp = config.teleportExp;
-boolean showPreview = config.showPreview;
 boolean playSound = config.playSound;
 ```
 
@@ -855,13 +881,12 @@ public class OKMAddonMain {
     }
     
     private static void setupEventListeners() {
-        // Pre-action: Add visual preview
+        // Pre-action: Customize target set
         ChainEvents.registerPreActionListener(event -> {
             if (event.getActionType() == ChainActionType.MINING) {
-                // Could send packet to client for preview rendering
-                PreviewRenderer.showPreview(
-                    event.getPlayer(), 
-                    event.getTargetPositions()
+                // Example: Remove disallowed targets
+                event.getTargetPositions().removeIf(pos ->
+                    isForbidden(event.getPlayer().level(), pos)
                 );
             }
         });
@@ -876,6 +901,102 @@ public class OKMAddonMain {
     }
 }
 ```
+
+### Example 6: Jade Integration (Show Chain Info)
+
+Show the last chain result in Jade (total blocks + current shape).
+
+**Register plugin (Fabric entrypoint required):**
+
+```java
+@WailaPlugin
+public class OKMJadePlugin implements IWailaPlugin {
+    @Override
+    public void register(IWailaCommonRegistration registration) {
+        registration.registerBlockDataProvider(OKMChainDataProvider.INSTANCE, BlockEntity.class);
+    }
+
+    @Override
+    public void registerClient(IWailaClientRegistration registration) {
+        registration.registerBlockComponent(OKMChainComponent.INSTANCE, Block.class);
+    }
+}
+```
+
+Fabric entrypoint:
+
+```json
+{
+    "entrypoints": {
+        "jade": ["your.package.OKMJadePlugin"]
+    }
+}
+```
+
+**Collect chain stats on server:**
+
+```java
+public record ChainStats(int count, String shape) {}
+
+public final class ChainStatsCache {
+    private static final Map<UUID, ChainStats> LAST = new ConcurrentHashMap<>();
+
+    public static void init() {
+        ChainEvents.registerPostActionListener(event -> {
+            var cfg = ConfigManager.getConfig();
+            LAST.put(event.getPlayer().getUUID(),
+                new ChainStats(event.getResult().totalCount(), cfg.shapeMode.name()));
+        });
+    }
+
+    public static ChainStats get(ServerPlayer player) {
+        return LAST.get(player.getUUID());
+    }
+}
+```
+
+**Sync and render with Jade:**
+
+```java
+public class OKMChainDataProvider implements StreamServerDataProvider<BlockAccessor, ChainStats> {
+    public static final OKMChainDataProvider INSTANCE = new OKMChainDataProvider();
+
+    @Override
+    public @Nullable ChainStats streamData(BlockAccessor accessor) {
+        return ChainStatsCache.get(accessor.getPlayer());
+    }
+
+    @Override
+    public StreamCodec<RegistryFriendlyByteBuf, ChainStats> streamCodec() {
+        return ChainStatsCodec.CODEC;
+    }
+
+    @Override
+    public ResourceLocation getUid() {
+        return new ResourceLocation("onekeyminer", "chain_stats");
+    }
+}
+
+public class OKMChainComponent implements IBlockComponentProvider {
+    public static final OKMChainComponent INSTANCE = new OKMChainComponent();
+
+    @Override
+    public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+        Optional<ChainStats> stats = OKMChainDataProvider.INSTANCE.decodeFromData(accessor);
+        stats.ifPresent(s -> {
+            tooltip.add(Component.literal("Chain: " + s.count()));
+            tooltip.add(Component.literal("Shape: " + s.shape()));
+        });
+    }
+
+    @Override
+    public ResourceLocation getUid() {
+        return new ResourceLocation("onekeyminer", "chain_stats");
+    }
+}
+```
+
+> Note: Use your own codec to serialize `ChainStats`.
 
 ---
 
@@ -896,6 +1017,13 @@ public class OKMAddonMain {
 | `blacklistTool(String)` | Add tool to mining blacklist |
 | `whitelistInteractionTool(String)` | Add tool to interaction whitelist |
 | `blacklistInteractionTool(String)` | Add tool to interaction blacklist |
+| `registerToolAction(String, ToolTargetType, ChainActionType, InteractionRule, List<String>)` | Register custom tool action rule |
+| `registerInteractionToolRule(String, ToolTargetType, InteractionRule, String...)` | Register interaction tool rule |
+| `registerMiningToolRule(String, String...)` | Register mining tool rule |
+| `registerEntityShearingRule(String, String...)` | Register entity shearing rule |
+| `findToolActionForBlock(ItemStack, BlockState)` | Find tool rule for block |
+| `findToolActionForEntity(ItemStack, Entity)` | Find tool rule for entity |
+| `hasToolActionRule(ItemStack, ChainActionType)` | Check if tool has custom rule |
 | `whitelistPlantable(String)` | Add item to plantable whitelist |
 | `blacklistPlantable(String)` | Add item to plantable blacklist |
 | `addBlockToGroup(String, String)` | Add block to group |
@@ -1016,10 +1144,6 @@ A: Check:
 ### Q: Can I trigger chain mining programmatically?
 
 A: Yes, create a `ChainActionContext` and call `ChainActionLogic.execute()`.
-
-### Q: How do I add preview highlighting for chain mining?
-
-A: Listen to `PreActionEvent`, get the target positions, and send them to your client-side renderer. See Example 5 above.
 
 ---
 

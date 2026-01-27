@@ -153,11 +153,7 @@ ChainEvents.registerPreActionListener(event -> {
 
 ## 🌟 附属模组开发
 
-想要添加预览高亮或其他功能？你可以使用我们的 API 创建附属模组！
-
-### 示例：方块预览渲染器
-
-参考 [LiteMiner 的 BlockHighlightRenderer](https://github.com/iamkaf/liteminer/blob/1.21.9/common/src/main/java/com/iamkaf/liteminer/rendering/BlockHighlightRenderer.java) 了解如何实现方块预览高亮功能。
+想要构建附属模组或进行联动？你可以使用我们的 API 注册方块/工具并监听连锁事件。
 
 ---
 
@@ -180,6 +176,13 @@ ChainEvents.registerPreActionListener(event -> {
 
 ---
 
+## 🌿 分支与发布规范
+
+- **分支命名**：每个 Minecraft 版本对应一个分支（如 `1.21.9`）。
+- **最新版**：最新 Minecraft 版本使用 `master` 分支维护。
+- **标签格式**：`<分支名>-<项目版本>`（例如：`1.21.9-1.6.0`）。
+
+
 ## 🐛 问题反馈
 
 发现 Bug 或有建议？
@@ -192,6 +195,20 @@ ChainEvents.registerPreActionListener(event -> {
 ## 📜 版权声明
 
 本项目采用 [All Rights Reserved (ARR)](LICENSE) 协议。未经作者许可，不得复制、修改或分发本项目代码。
+
+---
+
+## 💖 鸣谢
+
+- **作者**：[Mai_xiyu](https://github.com/Mai-xiyu)
+- **项目起源**：原版 OneKeyMiner 针对每个模组加载器和 Minecraft 版本都有独立的项目和分支，为了方便管理和维护，决定将所有平台统一到一个代码库中，并进行了完全的代码重构。
+- **特别感谢**：所有贡献者和测试者
+
+---
+
+<p align="center">
+  用 ❤️ 为 Minecraft 社区制作
+</p>
 
 ---
 

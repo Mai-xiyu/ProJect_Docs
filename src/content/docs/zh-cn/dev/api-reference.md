@@ -42,6 +42,7 @@ description: 模组开发接口文档
   - [操作统计追踪](#示例-3操作统计追踪)
   - [自定义工具逻辑](#示例-4自定义工具逻辑)
   - [附属模组开发](#示例-5附属模组开发)
+        - [Jade 联动（显示连锁信息）](#示例-6-jade-联动显示连锁信息)
 - [类参考](#类参考)
 - [最佳实践](#最佳实践)
 - [常见问题](#常见问题)
@@ -208,6 +209,32 @@ OneKeyMinerAPI.whitelistInteractionTool("#c:shears");
 
 // 添加到交互工具黑名单
 OneKeyMinerAPI.blacklistInteractionTool("mymod:broken_shears");
+```
+
+#### 自定义工具动作规则
+
+为特定工具绑定方块/实体目标，并指定连锁动作：
+
+```java
+// 实体剪羊毛规则（仅羊）
+OneKeyMinerAPI.registerEntityShearingRule(
+    "mymod:golden_shears",
+    "minecraft:sheep"
+);
+
+// 方块交互规则（类似锄头的耕地行为）
+OneKeyMinerAPI.registerInteractionToolRule(
+    "mymod:terra_hoe",
+    OneKeyMinerAPI.ToolTargetType.BLOCK,
+    OneKeyMinerAPI.InteractionRule.TILLING,
+    "#minecraft:dirt"
+);
+
+// 挖掘规则（右键触发连锁挖掘）
+OneKeyMinerAPI.registerMiningToolRule(
+    "mymod:ore_wand",
+    "#c:ores"
+);
 ```
 
 #### 可种植物品
@@ -622,7 +649,6 @@ int minHungerLevel = config.minHungerLevel;    // 最低饥饿值
 boolean allowBareHand = config.allowBareHand;  // 允许空手
 boolean teleportDrops = config.teleportDrops;  // 传送掉落物
 boolean teleportExp = config.teleportExp;      // 传送经验
-boolean showPreview = config.showPreview;      // 显示预览
 boolean playSound = config.playSound;          // 播放音效
 ```
 
@@ -855,13 +881,12 @@ public class OKMAddonMain {
     }
     
     private static void setupEventListeners() {
-        // 操作前：添加可视化预览
+        // 操作前：自定义目标集合
         ChainEvents.registerPreActionListener(event -> {
             if (event.getActionType() == ChainActionType.MINING) {
-                // 可以向客户端发送数据包用于预览渲染
-                PreviewRenderer.showPreview(
-                    event.getPlayer(), 
-                    event.getTargetPositions()
+                // 示例：移除不允许的目标
+                event.getTargetPositions().removeIf(pos ->
+                    isForbidden(event.getPlayer().level(), pos)
                 );
             }
         });
@@ -876,15 +901,6 @@ public class OKMAddonMain {
     }
 }
 ```
-
-#### 预览渲染参考
-
-如果你想为 OneKeyMiner 添加方块预览高亮功能，可以参考 [LiteMiner 的 BlockHighlightRenderer](https://github.com/iamkaf/liteminer/blob/1.21.9/common/src/main/java/com/iamkaf/liteminer/rendering/BlockHighlightRenderer.java)。
-
-基本思路：
-1. 监听 `PreActionEvent` 获取目标方块位置
-2. 通过网络包发送位置数据到客户端
-3. 在客户端使用 `WorldRenderEvents`（Fabric）或 `RenderLevelStageEvent`（Forge/NeoForge）渲染高亮
 
 ---
 
@@ -905,6 +921,13 @@ public class OKMAddonMain {
 | `blacklistTool(String)` | 将工具添加到挖掘黑名单 |
 | `whitelistInteractionTool(String)` | 将工具添加到交互白名单 |
 | `blacklistInteractionTool(String)` | 将工具添加到交互黑名单 |
+| `registerToolAction(String, ToolTargetType, ChainActionType, InteractionRule, List<String>)` | 注册自定义工具动作规则 |
+| `registerInteractionToolRule(String, ToolTargetType, InteractionRule, String...)` | 注册交互工具规则 |
+| `registerMiningToolRule(String, String...)` | 注册挖掘工具规则 |
+| `registerEntityShearingRule(String, String...)` | 注册实体剪羊毛规则 |
+| `findToolActionForBlock(ItemStack, BlockState)` | 查询方块上的工具规则 |
+| `findToolActionForEntity(ItemStack, Entity)` | 查询实体上的工具规则 |
+| `hasToolActionRule(ItemStack, ChainActionType)` | 判断工具是否有规则 |
 | `whitelistPlantable(String)` | 将物品添加到可种植白名单 |
 | `blacklistPlantable(String)` | 将物品添加到可种植黑名单 |
 | `addBlockToGroup(String, String)` | 将方块添加到分组 |
@@ -1049,6 +1072,102 @@ public void onCommonSetup(FMLCommonSetupEvent event) {
 }
 ```
 
+### 示例 6：Jade 联动（显示连锁信息）
+
+在 Jade 中显示最近一次连锁结果（方块数量 + 当前搜索形状）。
+
+**注册插件（Fabric 需添加 entrypoint）：**
+
+```java
+@WailaPlugin
+public class OKMJadePlugin implements IWailaPlugin {
+    @Override
+    public void register(IWailaCommonRegistration registration) {
+        registration.registerBlockDataProvider(OKMChainDataProvider.INSTANCE, BlockEntity.class);
+    }
+
+    @Override
+    public void registerClient(IWailaClientRegistration registration) {
+        registration.registerBlockComponent(OKMChainComponent.INSTANCE, Block.class);
+    }
+}
+```
+
+Fabric entrypoint：
+
+```json
+{
+    "entrypoints": {
+        "jade": ["your.package.OKMJadePlugin"]
+    }
+}
+```
+
+**服务端记录连锁数据：**
+
+```java
+public record ChainStats(int count, String shape) {}
+
+public final class ChainStatsCache {
+    private static final Map<UUID, ChainStats> LAST = new ConcurrentHashMap<>();
+
+    public static void init() {
+        ChainEvents.registerPostActionListener(event -> {
+            var cfg = ConfigManager.getConfig();
+            LAST.put(event.getPlayer().getUUID(),
+                new ChainStats(event.getResult().totalCount(), cfg.shapeMode.name()));
+        });
+    }
+
+    public static ChainStats get(ServerPlayer player) {
+        return LAST.get(player.getUUID());
+    }
+}
+```
+
+**Jade 同步与渲染：**
+
+```java
+public class OKMChainDataProvider implements StreamServerDataProvider<BlockAccessor, ChainStats> {
+    public static final OKMChainDataProvider INSTANCE = new OKMChainDataProvider();
+
+    @Override
+    public @Nullable ChainStats streamData(BlockAccessor accessor) {
+        return ChainStatsCache.get(accessor.getPlayer());
+    }
+
+    @Override
+    public StreamCodec<RegistryFriendlyByteBuf, ChainStats> streamCodec() {
+        return ChainStatsCodec.CODEC;
+    }
+
+    @Override
+    public ResourceLocation getUid() {
+        return new ResourceLocation("onekeyminer", "chain_stats");
+    }
+}
+
+public class OKMChainComponent implements IBlockComponentProvider {
+    public static final OKMChainComponent INSTANCE = new OKMChainComponent();
+
+    @Override
+    public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+        Optional<ChainStats> stats = OKMChainDataProvider.INSTANCE.decodeFromData(accessor);
+        stats.ifPresent(s -> {
+            tooltip.add(Component.literal("连锁数量: " + s.count()));
+            tooltip.add(Component.literal("搜索形状: " + s.shape()));
+        });
+    }
+
+    @Override
+    public ResourceLocation getUid() {
+        return new ResourceLocation("onekeyminer", "chain_stats");
+    }
+}
+```
+
+> 注意：`ChainStats` 的序列化需自行实现 Codec。
+
 ---
 
 ## 常见问题
@@ -1072,10 +1191,6 @@ A: 检查以下几点：
 ### Q: 我可以通过代码触发连锁挖矿吗？
 
 A: 可以，创建一个 `ChainActionContext` 并调用 `ChainActionLogic.execute()`。
-
-### Q: 如何为连锁挖矿添加预览高亮？
-
-A: 监听 `PreActionEvent`，获取目标位置，然后发送到客户端渲染器。参见上面的示例 5。
 
 ### Q: 事件监听器的执行顺序是什么？
 
