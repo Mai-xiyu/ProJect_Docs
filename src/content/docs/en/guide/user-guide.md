@@ -408,4 +408,4 @@ Having issues or suggestions?
   <strong>Enjoy mining, farming, and planting! ⛏️🌾🌱</strong>
 </p>
 
-*User Guide Version: 2.0.0 | For Minecraft 1.21.9*
+*User Guide Version: 1.6.0 | For Minecraft 1.21.9*
