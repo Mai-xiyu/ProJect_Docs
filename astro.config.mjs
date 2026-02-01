@@ -4,7 +4,7 @@ import starlight from '@astrojs/starlight';
 
 export default defineConfig({
   site: 'https://mai-xiyu.github.io',
-  base: '/OneKeyMiner_Docs',
+  base: '/ProJect_Docs',
   integrations: [
     starlight({
       title: 'Mai_xiyu Projects',
