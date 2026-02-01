@@ -7,7 +7,7 @@ export default defineConfig({
   base: '/OneKeyMiner_Docs',
   integrations: [
     starlight({
-      title: 'OneKeyMiner',
+      title: 'Mai_xiyu Projects',
       defaultLocale: 'zh-cn',
       locales: {
         'zh-cn': {
@@ -27,38 +27,58 @@ export default defineConfig({
       ],
       sidebar: [
         {
-          label: '开始',
-          translations: { en: 'Start' },
+          label: 'OneKeyMiner',
           items: [
-            { 
-              label: '简介',
-              slug: 'intro',
-              translations: { en: 'Introduction' }
+            {
+              label: '开始',
+              translations: { en: 'Start' },
+              items: [
+                { 
+                  label: '简介',
+                  slug: 'intro',
+                  translations: { en: 'Introduction' }
+                },
+              ],
             },
-          ],
+            {
+              label: '用户手册',
+              translations: { en: 'User Manual' },
+              items: [
+                { 
+                  label: '使用指南',
+                  slug: 'guide/user-guide',
+                  translations: { en: 'User Guide' }
+                },
+              ],
+            },
+            {
+              label: '开发者中心',
+              translations: { en: 'Developer' },
+              items: [
+                { 
+                  label: 'API 文档',
+                  slug: 'dev/api-reference',
+                  translations: { en: 'API Reference' }
+                },
+              ],
+            },
+          ]
         },
         {
-          label: '用户手册',
-          translations: { en: 'User Manual' },
+          label: 'Spartan Weaponry',
           items: [
-            { 
-              label: '使用指南',
-              slug: 'guide/user-guide',
-              translations: { en: 'User Guide' }
-            },
-          ],
-        },
-        {
-          label: '开发者中心',
-          translations: { en: 'Developer' },
-          items: [
-            { 
-              label: 'API 文档',
-              slug: 'dev/api-reference',
-              translations: { en: 'API Reference' }
-            },
-          ],
-        },
+             {
+               label: '简介',
+               slug: 'spartanweaponry/intro',
+               translations: { en: 'Introduction' }
+             },
+             {
+               label: 'API 参考',
+               slug: 'spartanweaponry/api-reference',
+               translations: { en: 'API Reference' }
+             }
+          ]
+        }
       ],
     }),
   ],

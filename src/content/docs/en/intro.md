@@ -7,7 +7,7 @@ description: Overview of OneKeyMiner mod
 # OneKeyMiner
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Mai-xiyu/OneKeyMiner_Docs/refs/heads/master/public/img/logo.png" alt="OneKeyMiner Logo" width="720" height="393">
+  <img src="https://raw.githubusercontent.com/Mai-xiyu/OneKeyMiner_Docs/refs/heads/master/public/img/okm_logo.png" alt="OneKeyMiner Logo" width="720" height="393">
 </p>
 
 <p align="center">

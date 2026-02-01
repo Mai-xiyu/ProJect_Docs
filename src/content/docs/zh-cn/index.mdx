@@ -1,49 +1,30 @@
 ---
-title: OneKeyMiner
-description: 连锁挖矿、交互、种植 - 一个模组全搞定！
+title: Mai_xiyu Projects
+description: Mai_xiyu 的项目中心，包含 OneKeyMiner 和 Spartan Weaponry Unofficial。
 template: splash
 hero:
-  tagline: 连锁挖矿、交互、种植 - 一个模组全搞定！
+  tagline: 欢迎来到 Mai_xiyu 的项目文档中心
   actions:
-    - text: 开始使用
-      link: guide/user-guide/
-      icon: right-arrow
-      variant: primary
-    - text: 查看简介
-      link: intro/
-      icon: open-book
-      variant: minimal
     - text: 查看 GitHub
-      link: https://github.com/Mai-xiyu/OneKeyMiner
+      link: https://github.com/Mai-xiyu
       icon: external
+      variant: primary
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-<div style={{textAlign: 'center', margin: '2rem 0'}}>
-  <img src="https://raw.githubusercontent.com/Mai-xiyu/OneKeyMiner_Docs/refs/heads/master/public/img/logo.png" alt="OneKeyMiner Logo" style={{maxWidth: '400px', width: '100%', height: 'auto'}} />
-</div>
+## 📚 项目列表
 
-## ✨ 主要特性
-
-<CardGrid stagger>
-	<Card title="⛏️ 连锁挖矿" icon="rocket">
-		一次性破坏相连的同类型方块。支持所有矿石、原木和树叶，智能识别方块类型。
+<CardGrid>
+	<Card title="OneKeyMiner" icon="rocket">
+		连锁挖矿、交互、种植 - 一个模组全搞定！
+        <br/>
+        [使用指南](/OneKeyMiner_Docs/zh-cn/guide/user-guide/) | [GitHub](https://github.com/Mai-xiyu/OneKeyMiner)
 	</Card>
-	<Card title="✂️ 连锁交互" icon="setting">
-		批量剪羊毛、锄地、去皮、铺路径。大幅提升农业和建筑效率。
-	</Card>
-	<Card title="🌱 连锁种植" icon="open-book">
-		在相邻农田自动播种，一键种植大片农田。支持所有原版和模组作物。
-	</Card>
-	<Card title="🎮 多平台支持" icon="star">
-		完美支持 Fabric、NeoForge 和 Forge 三大加载器 (Minecraft 1.21.9+)。
-	</Card>
-	<Card title="⚙️ 高度可配置" icon="puzzle">
-		自定义最大方块数、搜索距离、激活方式等。支持白名单和黑名单。
-	</Card>
-	<Card title="🔒 安全保护" icon="approve-check">
-		自动保护工具耐久度和饥饿值，避免工具损坏和玩家挨饿。
+	<Card title="Spartan Weaponry Unofficial" icon="sword">
+		斯巴达武器非官方版。
+        <br/>
+        [简介](/OneKeyMiner_Docs/zh-cn/spartanweaponry/intro/) | [GitHub](https://github.com/Mai-xiyu/SpartanWeaponry-NeoForge)
 	</Card>
 </CardGrid>
 
