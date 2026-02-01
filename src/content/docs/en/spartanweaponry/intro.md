@@ -6,7 +6,7 @@ description: Introduction to Spartan Weaponry Unofficial mod
 # Spartan Weaponry Unofficial
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Mai-xiyu/OneKeyMiner_Docs/refs/heads/master/public/img/sp_logo.png" alt="SPLogo" width="720" height="393">
+  <img src="https://raw.githubusercontent.com/Mai-xiyu/ProJect_Docs/refs/heads/master/public/img/sp_logo.png" alt="SPLogo" width="720" height="393">
 </p>
 
 <p align="center">

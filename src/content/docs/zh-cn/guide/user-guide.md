@@ -6,7 +6,7 @@ description: 详细的安装、配置与操作说明
 # OneKeyMiner 用户指南
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Mai-xiyu/OneKeyMiner_Docs/refs/heads/master/public/img/okm_logo.png" alt="OneKeyMiner Logo" width="720" height="393">
+  <img src="https://raw.githubusercontent.com/Mai-xiyu/ProJect_Docs/refs/heads/master/public/img/okm_logo.png" alt="OneKeyMiner Logo" width="720" height="393">
 </p>
 
 <p align="center">
