@@ -79,7 +79,7 @@ export default defineConfig({
              },
              {
                label: '资源包开发指南',
-               slug: 'spartanweaponry/Resource_Pack_Development_Guide',
+               slug: 'spartanweaponry/resource-pack-development-guide',
                translations: { en: 'Resource Pack Development Guide' }
              }
           ]
