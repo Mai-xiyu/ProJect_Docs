@@ -76,6 +76,11 @@ export default defineConfig({
                label: 'API 参考',
                slug: 'spartanweaponry/api-reference',
                translations: { en: 'API Reference' }
+             },
+             {
+               label: '资源包开发指南',
+               slug: 'spartanweaponry/resource-pack-development-guide',
+               translations: { en: 'Resource Pack Development Guide' }
              }
           ]
         }
