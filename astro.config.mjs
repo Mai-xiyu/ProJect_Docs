@@ -69,17 +69,17 @@ export default defineConfig({
           items: [
              {
                label: '简介',
-               slug: 'spartanweaponry/intro',
+               slug: 'spartan_weaponry_unofficial/intro',
                translations: { en: 'Introduction' }
              },
              {
                label: 'API 参考',
-               slug: 'spartanweaponry/api-reference',
+               slug: 'spartan_weaponry_unofficial/api-reference',
                translations: { en: 'API Reference' }
              },
              {
                label: '资源包开发指南',
-               slug: 'spartanweaponry/resource-pack-development-guide',
+               slug: 'spartan_weaponry_unofficial/resource-pack-development-guide',
                translations: { en: 'Resource Pack Development Guide' }
              }
           ]
