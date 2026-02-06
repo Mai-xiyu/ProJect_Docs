@@ -31,7 +31,7 @@ dependencies {
 
 ## 🚀 快速入门
 
-主要的 API 入口点是 `org.xiyu.spartan_weaponry_unofficial.api.SpartanWeaponryAPI` 类。
+主要的 API 入口点是 `org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI` 类。
 
 > ⚠️ **重要变更**: 从 1.0.2 版本开始，Mod ID 已更改为 `spartan_weaponry_unofficial`。
 
@@ -41,7 +41,7 @@ dependencies {
 
 #### 使用预定义材质
 ```java
-import org.xiyu.spartan_weaponry_unofficial.api.WeaponMaterial;
+import org.xiyu.spartanweaponryunofficial.api.WeaponMaterial;
 
 // 预定义材质: WOOL, STONE, IRON, GOLD, DIAMOND, NETHERITE 等
 WeaponMaterial material = WeaponMaterial.IRON;
@@ -49,8 +49,8 @@ WeaponMaterial material = WeaponMaterial.IRON;
 
 #### 创建自定义材质
 ```java
-import org.xiyu.spartan_weaponry_unofficial.api.WeaponMaterial;
-import org.xiyu.spartan_weaponry_unofficial.api.SpartanWeaponryAPI;
+import org.xiyu.spartanweaponryunofficial.api.WeaponMaterial;
+import org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI;
 import net.minecraft.world.item.Tiers;
 
 // 使用 Vanilla Tier 创建
@@ -71,7 +71,7 @@ WeaponMaterial myMaterial = new WeaponMaterial(
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import org.xiyu.spartan_weaponry_unofficial.api.SpartanWeaponryAPI;
+import org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI;
 
 public class MyModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "mymodid");
