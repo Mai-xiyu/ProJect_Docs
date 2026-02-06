@@ -174,7 +174,7 @@ assets/spartan_weaponry_unofficial/textures/item/iron_longbow_pulling_2.png
 | 木棍 | `coating/club.png` |
 | 原版剑 | `coating/vanilla_sword.png` |
 
-> 💡 **提示**：覆盖层纹理使用模型的自定义加载器 `spartanweaponryunofficial:oil_coated_item` 来渲染。
+> 💡 **提示**：覆盖层纹理使用模型的自定义加载器 `spartan_weaponry_unofficial:oil_coated_item` 来渲染。
 
 ---
 
@@ -333,17 +333,17 @@ textures/mob_effect/ender_disruption.png  # 末影扰乱效果图标
 ```json
 // particles/damage_boosted.json
 { 
-  "textures": ["spartanweaponryunofficial:damage_boosted"]
+  "textures": ["spartan_weaponry_unofficial:damage_boosted"]
 }
 
 // particles/damage_reduced.json
 { 
-  "textures": ["spartanweaponryunofficial:damage_reduced"]
+  "textures": ["spartan_weaponry_unofficial:damage_reduced"]
 }
 
 // particles/oil_damage_boosted.json
 { 
-  "textures": ["spartanweaponryunofficial:damage_boosted"]
+  "textures": ["spartan_weaponry_unofficial:damage_boosted"]
 }
 ```
 
@@ -386,20 +386,20 @@ damage_reduced.png   # 伤害减免粒子
 ### 自定义音效示例
 
 ```json
-// assets/spartanweaponryunofficial/sounds.json
+// assets/spartan_weaponry_unofficial/sounds.json
 {
   "boomerang_throw": {
     "sounds": [
-      "spartanweaponryunofficial:custom/boomerang_throw"
+      "spartan_weaponry_unofficial:custom/boomerang_throw"
     ],
-    "subtitle": "subtitle.spartanweaponryunofficial.boomerang_throw"
+    "subtitle": "subtitle.spartan_weaponry_unofficial.boomerang_throw"
   }
 }
 ```
 
 音效文件放置于：
 ```
-assets/spartanweaponryunofficial/sounds/custom/boomerang_throw.ogg
+assets/spartan_weaponry_unofficial/sounds/custom/boomerang_throw.ogg
 ```
 
 ---

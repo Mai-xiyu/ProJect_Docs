@@ -31,7 +31,7 @@ dependencies {
 
 ## 🚀 Quick Start
 
-The main API entry point is the `org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI` class.
+The main API entry point is the `org.xiyu.spartan_weaponry_unofficial.api.SpartanWeaponryAPI` class.
 
 > ⚠️ **Important Change**: Starting from version 1.0.2, the Mod ID has been changed to `spartan_weaponry_unofficial`.
 
@@ -41,7 +41,7 @@ You can use predefined materials or create custom ones.
 
 #### Using Predefined Materials
 ```java
-import org.xiyu.spartanweaponryunofficial.api.WeaponMaterial;
+import org.xiyu.spartan_weaponry_unofficial.api.WeaponMaterial;
 
 // Predefined materials: WOOL, STONE, IRON, GOLD, DIAMOND, NETHERITE, etc.
 WeaponMaterial material = WeaponMaterial.IRON;
@@ -49,8 +49,8 @@ WeaponMaterial material = WeaponMaterial.IRON;
 
 #### Creating Custom Materials
 ```java
-import org.xiyu.spartanweaponryunofficial.api.WeaponMaterial;
-import org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI;
+import org.xiyu.spartan_weaponry_unofficial.api.WeaponMaterial;
+import org.xiyu.spartan_weaponry_unofficial.api.SpartanWeaponryAPI;
 import net.minecraft.world.item.Tiers;
 
 // Create using Vanilla Tier
@@ -71,7 +71,7 @@ It is recommended to use NeoForge/Forge's `DeferredRegister` to register items.
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI;
+import org.xiyu.spartan_weaponry_unofficial.api.SpartanWeaponryAPI;
 
 public class MyModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "mymodid");
