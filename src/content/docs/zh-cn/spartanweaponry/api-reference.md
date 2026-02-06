@@ -24,13 +24,16 @@ repositories {
 dependencies {
     // 替换 xxxxx 为具体的 Project ID 和 File ID
     // 示例: implementation fg.deobf("curse.maven:spartan-weaponry-unofficial-12345:67890")
+    // 注意: Mod ID 使用下划线 spartan_weaponry_unofficial
     implementation fg.deobf("curse.maven:spartan-weaponry-unofficial-xxxxx:yyyyy")
 }
 ```
 
 ## 🚀 快速入门
 
-主要的 API 入口点是 `org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI` 类。
+主要的 API 入口点是 `org.xiyu.spartan_weaponry_unofficial.api.SpartanWeaponryAPI` 类。
+
+> ⚠️ **重要变更**: 从 1.0.3 版本开始，Mod ID 已更改为 `spartan_weaponry_unofficial` (使用下划线)。
 
 ### 1. 定义武器材质
 
@@ -117,8 +120,8 @@ public MyMod() {
 | `createHalberd` | 戟 | `halberd_{material}` |
 | `createPike` | 长矛 | `pike_{material}` |
 | `createLance` | 骑枪 | `lance_{material}` |
-| `createLongbow` | 长弓 | `longbow_{material}` |
-| `createHeavyCrossbow` | 重型弩 | `heavy_crossbow_{material}` |
+| `createLongbow` | 强化长弓 | `longbow_{material}_strengthened` |
+| `createHeavyCrossbow` | 强化重型弩 | `heavy_crossbow_{material}_strengthened` |
 | `createThrowingKnife` | 飞刀 | `throwing_knife_{material}` |
 | `createTomahawk` | 飞斧 | `tomahawk_{material}` |
 | `createJavelin` | 标枪 | `javelin_{material}` |
@@ -126,6 +129,29 @@ public MyMod() {
 | `createMace` | 钉头锤 | `mace_{material}` |
 | `createQuarterstaff` | 铁头棒 | `quarterstaff_{material}` |
 | `createGlaive` | 关刀 | `glaive_{material}` |
+
+---
+
+## 📝 特殊命名规则
+
+### 强化武器 (Strengthened Weapons)
+
+从 1.0.3 版本开始，通过附加 API 创建的长弓和重型十字弓会自动添加 `_strengthened` 后缀：
+
+```java
+// 长弓注册示例
+public static final DeferredHolder<Item, Item> DIAMOND_LONGBOW = ITEMS.register(
+    "longbow_diamond_strengthened",  // 注意 strengthened 后缀
+    () -> SpartanWeaponryAPI.createLongbow(WeaponMaterial.DIAMOND)
+);
+
+// 本地化键格式
+// "item.spartan_weaponry_unofficial.longbow_diamond_strengthened": "Diamond-Strengthened Longbow"
+```
+
+这些武器使用相同的纹理文件（无需 `_strengthened` 后缀）：
+- 纹理路径: `textures/item/diamond_longbow_standby.png`
+- 注册名称: `longbow_diamond_strengthened`
 
 ---
 
@@ -141,7 +167,7 @@ public MyMod() {
 
 ### 通过 Tag 添加特性 (推荐)
 
-在 `data/spartanweaponry/tags/weapon_traits/` 下创建 JSON 文件：
+在 `data/spartan_weaponry_unofficial/tags/weapon_traits/` 下创建 JSON 文件：
 
 ```json
 {
@@ -151,3 +177,5 @@ public MyMod() {
   ]
 }
 ```
+
+> 📝 **注意**: 路径使用下划线 `spartan_weaponry_unofficial`，而非旧版的 `spartanweaponryunofficial`。
