@@ -31,9 +31,9 @@ dependencies {
 
 ## 🚀 快速入门
 
-主要的 API 入口点是 `org.xiyu.spartan_weaponry_unofficial.api.SpartanWeaponryAPI` 类。
+主要的 API 入口点是 `org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI` 类。
 
-> ⚠️ **重要变更**: 从 1.0.3 版本开始，Mod ID 已更改为 `spartan_weaponry_unofficial` (使用下划线)。
+> ⚠️ **重要变更**: 从 1.0.2 版本开始，Mod ID 已更改为 `spartan_weaponry_unofficial`。
 
 ### 1. 定义武器材质
 
@@ -105,53 +105,83 @@ public MyMod() {
 
 所有方法均位于 `SpartanWeaponryAPI` 类中，且需要一个 `WeaponMaterial` 参数。
 
-| 方法名 | 描述 | 生成Registry Name示例 |
-| :--- | :--- | :--- |
-| `createDagger` | 匕首 | `dagger_{material}` |
-| `createParryingDagger` | 招架匕首 | `parrying_dagger_{material}` |
-| `createLongsword` | 长剑 | `longsword_{material}` |
-| `createKatana` | 太刀 | `katana_{material}` |
-| `createSaber` | 军刀 | `saber_{material}` |
-| `createRapier` | 西洋剑 | `rapier_{material}` |
-| `createGreatsword` | 巨剑 | `greatsword_{material}` |
-| `createBattleHammer` | 战锤 | `battle_hammer_{material}` |
-| `createWarhammer` | 大锤 | `warhammer_{material}` |
-| `createSpear` | 矛 | `spear_{material}` |
-| `createHalberd` | 戟 | `halberd_{material}` |
-| `createPike` | 长矛 | `pike_{material}` |
-| `createLance` | 骑枪 | `lance_{material}` |
-| `createLongbow` | 强化长弓 | `longbow_{material}_strengthened` |
-| `createHeavyCrossbow` | 强化重型弩 | `heavy_crossbow_{material}_strengthened` |
-| `createThrowingKnife` | 飞刀 | `throwing_knife_{material}` |
-| `createTomahawk` | 飞斧 | `tomahawk_{material}` |
-| `createJavelin` | 标枪 | `javelin_{material}` |
-| `createBoomerang` | 回旋镖 | `boomerang_{material}` |
-| `createMace` | 钉头锤 | `mace_{material}` |
-| `createQuarterstaff` | 铁头棒 | `quarterstaff_{material}` |
-| `createGlaive` | 关刀 | `glaive_{material}` |
+| 方法名 | 描述 | 注册名格式 | 本地化键格式 |
+| :--- | :--- | :--- | :--- |
+| `createDagger` | 匕首 | `{material}_dagger` | `item.spartan_weaponry_unofficial.{material}_dagger` |
+| `createParryingDagger` | 招架匕首 | `{material}_parrying_dagger` | `item.spartan_weaponry_unofficial.{material}_parrying_dagger` |
+| `createLongsword` | 长剑 | `{material}_longsword` | `item.spartan_weaponry_unofficial.{material}_longsword` |
+| `createKatana` | 太刀 | `{material}_katana` | `item.spartan_weaponry_unofficial.{material}_katana` |
+| `createSaber` | 军刀 | `{material}_saber` | `item.spartan_weaponry_unofficial.{material}_saber` |
+| `createRapier` | 西洋剑 | `{material}_rapier` | `item.spartan_weaponry_unofficial.{material}_rapier` |
+| `createGreatsword` | 巨剑 | `{material}_greatsword` | `item.spartan_weaponry_unofficial.{material}_greatsword` |
+| `createBattleHammer` | 战锤 | `{material}_battle_hammer` | `item.spartan_weaponry_unofficial.{material}_battle_hammer` |
+| `createWarhammer` | 大锤 | `{material}_warhammer` | `item.spartan_weaponry_unofficial.{material}_warhammer` |
+| `createSpear` | 矛 | `{material}_spear` | `item.spartan_weaponry_unofficial.{material}_spear` |
+| `createHalberd` | 戟 | `{material}_halberd` | `item.spartan_weaponry_unofficial.{material}_halberd` |
+| `createPike` | 长矛 | `{material}_pike` | `item.spartan_weaponry_unofficial.{material}_pike` |
+| `createLance` | 骑枪 | `{material}_lance` | `item.spartan_weaponry_unofficial.{material}_lance` |
+| `createLongbow` | 强化长弓 | `longbow_{material}_strengthened` | `item.spartan_weaponry_unofficial.longbow_{material}_strengthened` |
+| `createHeavyCrossbow` | 强化重型弩 | `heavy_crossbow_{material}_strengthened` | `item.spartan_weaponry_unofficial.heavy_crossbow_{material}_strengthened` |
+| `createThrowingKnife` | 飞刀 | `{material}_throwing_knife` | `item.spartan_weaponry_unofficial.{material}_throwing_knife` |
+| `createTomahawk` | 飞斧 | `{material}_tomahawk` | `item.spartan_weaponry_unofficial.{material}_tomahawk` |
+| `createJavelin` | 标枪 | `{material}_javelin` | `item.spartan_weaponry_unofficial.{material}_javelin` |
+| `createBoomerang` | 回旋镖 | `{material}_boomerang` | `item.spartan_weaponry_unofficial.{material}_boomerang` |
+| `createMace` | 钉头锤 | `{material}_mace` | `item.spartan_weaponry_unofficial.{material}_mace` |
+| `createQuarterstaff` | 铁头棒 | `{material}_quarterstaff` | `item.spartan_weaponry_unofficial.{material}_quarterstaff` |
+| `createGlaive` | 关刀 | `{material}_glaive` | `item.spartan_weaponry_unofficial.{material}_glaive` |
 
 ---
 
-## 📝 特殊命名规则
+## 📝 命名规则说明
+
+### 近战武器和投掷武器
+
+近战武器和投掷武器使用 `{material}_{weapon}` 格式：
+
+```java
+// 近战武器注册示例
+public static final DeferredHolder<Item, Item> IRON_LONGSWORD = ITEMS.register(
+    "iron_longsword",  // {material}_{weapon} 格式
+    () -> SpartanWeaponryAPI.createLongsword(MyModMaterials.IRON)
+);
+
+// 投掷武器注册示例
+public static final DeferredHolder<Item, Item> DIAMOND_THROWING_KNIFE = ITEMS.register(
+    "diamond_throwing_knife",  // {material}_{weapon} 格式
+    () -> SpartanWeaponryAPI.createThrowingKnife(MyModMaterials.DIAMOND)
+);
+
+// 本地化键格式
+// "item.spartan_weaponry_unofficial.iron_longsword": "Iron Longsword"
+// "item.spartan_weaponry_unofficial.diamond_throwing_knife": "Diamond Throwing Knife"
+```
 
 ### 强化武器 (Strengthened Weapons)
 
-从 1.0.3 版本开始，通过附加 API 创建的长弓和重型十字弓会自动添加 `_strengthened` 后缀：
+从 1.0.3 版本开始，通过附加 API 创建的**长弓和重型十字弓**使用特殊格式 `{weapontype}_{material}_strengthened`：
 
 ```java
 // 长弓注册示例
 public static final DeferredHolder<Item, Item> DIAMOND_LONGBOW = ITEMS.register(
-    "longbow_diamond_strengthened",  // 注意 strengthened 后缀
+    "longbow_diamond_strengthened",  // 注意格式: longbow_{material}_strengthened
     () -> SpartanWeaponryAPI.createLongbow(WeaponMaterial.DIAMOND)
+);
+
+// 重型十字弓注册示例  
+public static final DeferredHolder<Item, Item> IRON_HEAVY_CROSSBOW = ITEMS.register(
+    "heavy_crossbow_iron_strengthened",  // 格式: heavy_crossbow_{material}_strengthened
+    () -> SpartanWeaponryAPI.createHeavyCrossbow(WeaponMaterial.IRON)
 );
 
 // 本地化键格式
 // "item.spartan_weaponry_unofficial.longbow_diamond_strengthened": "Diamond-Strengthened Longbow"
+// "item.spartan_weaponry_unofficial.heavy_crossbow_iron_strengthened": "Iron-Strengthened Heavy Crossbow"
 ```
 
-这些武器使用相同的纹理文件（无需 `_strengthened` 后缀）：
-- 纹理路径: `textures/item/diamond_longbow_standby.png`
+**纹理文件命名**：强化武器的纹理文件名**不包含** `_strengthened` 后缀：
 - 注册名称: `longbow_diamond_strengthened`
+- 纹理路径: `textures/item/diamond_longbow_standby.png` (无 strengthened)
+- 纹理路径: `textures/item/iron_heavy_crossbow_standby.png` (无 strengthened)
 
 ---
 
@@ -177,5 +207,3 @@ public static final DeferredHolder<Item, Item> DIAMOND_LONGBOW = ITEMS.register(
   ]
 }
 ```
-
-> 📝 **注意**: 路径使用下划线 `spartan_weaponry_unofficial`，而非旧版的 `spartanweaponryunofficial`。
