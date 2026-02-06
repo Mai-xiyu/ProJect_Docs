@@ -33,7 +33,8 @@ dependencies {
 
 主要的 API 入口点是 `org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI` 类。
 
-> ⚠️ **重要变更**: 从 1.0.2 版本开始，Mod ID 已更改为 `spartan_weaponry_unofficial`。
+> ⚠️ **重要变更**: 从 1.0.2 版本开始，Mod ID 已更改为 `spartan_weaponry_unofficial`。  
+> 💡 **注意**: Java 包名仍然使用 `spartanweaponryunofficial`（无下划线），而 Mod ID 和资源路径使用 `spartan_weaponry_unofficial`（带下划线）。
 
 ### 1. 定义武器材质
 

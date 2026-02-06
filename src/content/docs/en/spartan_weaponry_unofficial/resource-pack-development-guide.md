@@ -93,8 +93,8 @@ The following weapon types require only one texture file:
 
 **Example Paths:**
 ```
-assets/spartanweaponryunofficial/textures/item/iron_longsword.png
-assets/spartanweaponryunofficial/textures/item/diamond_battle_hammer.png
+assets/spartan_weaponry_unofficial/textures/item/iron_longsword.png
+assets/spartan_weaponry_unofficial/textures/item/diamond_battle_hammer.png
 ```
 
 #### Throwing Weapons (Single Texture + Empty State)
@@ -121,10 +121,10 @@ Longbows require 4 texture files to represent different drawing stages:
 
 **Example:**
 ```
-assets/spartanweaponryunofficial/textures/item/iron_longbow_standby.png
-assets/spartanweaponryunofficial/textures/item/iron_longbow_pulling_0.png
-assets/spartanweaponryunofficial/textures/item/iron_longbow_pulling_1.png
-assets/spartanweaponryunofficial/textures/item/iron_longbow_pulling_2.png
+assets/spartan_weaponry_unofficial/textures/item/iron_longbow_standby.png
+assets/spartan_weaponry_unofficial/textures/item/iron_longbow_pulling_0.png
+assets/spartan_weaponry_unofficial/textures/item/iron_longbow_pulling_1.png
+assets/spartan_weaponry_unofficial/textures/item/iron_longbow_pulling_2.png
 ```
 
 #### Heavy Crossbow (5 Textures)
@@ -169,7 +169,7 @@ Oiled weapons display an overlay texture. These textures are located in the `tex
 | Club | `coating/club.png` |
 | Vanilla Sword | `coating/vanilla_sword.png` |
 
-> 💡 **Tip**: Overlay textures use the model's custom loader `spartanweaponryunofficial:oil_coated_item` for rendering.
+> 💡 **Tip**: Overlay textures use the model's custom loader `spartan_weaponry_unofficial:oil_coated_item` for rendering.
 
 ---
 
@@ -328,17 +328,17 @@ textures/mob_effect/ender_disruption.png  # Ender Disruption effect icon
 ```json
 // particles/damage_boosted.json
 { 
-  "textures": ["spartanweaponryunofficial:damage_boosted"]
+  "textures": ["spartan_weaponry_unofficial:damage_boosted"]
 }
 
 // particles/damage_reduced.json
 { 
-  "textures": ["spartanweaponryunofficial:damage_reduced"]
+  "textures": ["spartan_weaponry_unofficial:damage_reduced"]
 }
 
 // particles/oil_damage_boosted.json
 { 
-  "textures": ["spartanweaponryunofficial:damage_boosted"]
+  "textures": ["spartan_weaponry_unofficial:damage_boosted"]
 }
 ```
 
@@ -381,20 +381,20 @@ The mod uses the following sound events, which you can replace via resource pack
 ### Custom Sound Example
 
 ```json
-// assets/spartanweaponryunofficial/sounds.json
+// assets/spartan_weaponry_unofficial/sounds.json
 {
   "boomerang_throw": {
     "sounds": [
-      "spartanweaponryunofficial:custom/boomerang_throw"
+      "spartan_weaponry_unofficial:custom/boomerang_throw"
     ],
-    "subtitle": "subtitle.spartanweaponryunofficial.boomerang_throw"
+    "subtitle": "subtitle.spartan_weaponry_unofficial.boomerang_throw"
   }
 }
 ```
 
 Sound files should be placed at:
 ```
-assets/spartanweaponryunofficial/sounds/custom/boomerang_throw.ogg
+assets/spartan_weaponry_unofficial/sounds/custom/boomerang_throw.ogg
 ```
 
 ---
@@ -421,13 +421,13 @@ The mod uses custom item properties to control model changes:
 
 | Property ID | Usage | Values |
 |:------------|:------|:-------|
-| `spartanweaponryunofficial:blocking` | Blocking state | 0.0 / 1.0 |
-| `spartanweaponryunofficial:throwing` | Throwing charge state | 0.0 / 1.0 |
-| `spartanweaponryunofficial:pulling` | Drawing/loading state | 0.0 / 1.0 |
-| `spartanweaponryunofficial:pull` | Drawing/loading progress | 0.0 ~ 1.0 |
-| `spartanweaponryunofficial:charged` | Crossbow loaded | 0.0 / 1.0 |
-| `spartanweaponryunofficial:empty` | Throwing weapon depleted | 0.0 / 1.0 |
-| `spartanweaponryunofficial:arrow` | Quiver fill level | 0 ~ 5 |
+| `spartan_weaponry_unofficial:blocking` | Blocking state | 0.0 / 1.0 |
+| `spartan_weaponry_unofficial:throwing` | Throwing charge state | 0.0 / 1.0 |
+| `spartan_weaponry_unofficial:pulling` | Drawing/loading state | 0.0 / 1.0 |
+| `spartan_weaponry_unofficial:pull` | Drawing/loading progress | 0.0 ~ 1.0 |
+| `spartan_weaponry_unofficial:charged` | Crossbow loaded | 0.0 / 1.0 |
+| `spartan_weaponry_unofficial:empty` | Throwing weapon depleted | 0.0 / 1.0 |
+| `spartan_weaponry_unofficial:arrow` | Quiver fill level | 0 ~ 5 |
 
 ### Complete Model Example
 
@@ -436,25 +436,25 @@ Here's a complete model file example for a longsword:
 ```json
 // models/item/iron_longsword.json
 {
-  "parent": "spartanweaponryunofficial:item/base/longsword",
-  "loader": "spartanweaponryunofficial:oil_coated_item",
+  "parent": "spartan_weaponry_unofficial:item/base/longsword",
+  "loader": "spartan_weaponry_unofficial:oil_coated_item",
   "overrides": [
     {
-      "model": "spartanweaponryunofficial:item/iron_longsword_blocking",
+      "model": "spartan_weaponry_unofficial:item/iron_longsword_blocking",
       "predicate": {
-        "spartanweaponryunofficial:blocking": 1.0
+        "spartan_weaponry_unofficial:blocking": 1.0
       }
     },
     {
-      "model": "spartanweaponryunofficial:item/iron_longsword_throwing",
+      "model": "spartan_weaponry_unofficial:item/iron_longsword_throwing",
       "predicate": {
-        "spartanweaponryunofficial:throwing": 1.0
+        "spartan_weaponry_unofficial:throwing": 1.0
       }
     }
   ],
   "textures": {
-    "coating": "spartanweaponryunofficial:item/coating/longsword",
-    "layer0": "spartanweaponryunofficial:item/iron_longsword"
+    "coating": "spartan_weaponry_unofficial:item/coating/longsword",
+    "layer0": "spartan_weaponry_unofficial:item/iron_longsword"
   }
 }
 ```

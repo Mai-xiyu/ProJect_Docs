@@ -33,7 +33,8 @@ dependencies {
 
 The main API entry point is the `org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI` class.
 
-> ⚠️ **Important Change**: Starting from version 1.0.2, the Mod ID has been changed to `spartan_weaponry_unofficial`.
+> ⚠️ **Important Change**: Starting from version 1.0.2, the Mod ID has been changed to `spartan_weaponry_unofficial`.  
+> 💡 **Note**: The Java package name remains `spartanweaponryunofficial` (without underscores), while the Mod ID and resource paths use `spartan_weaponry_unofficial` (with underscores).
 
 ### 1. Define Weapon Material
 
