@@ -9,8 +9,10 @@ This document provides a detailed resource structure guide for the `Spartan Weap
 
 ## 📁 Resource Directory Structure Overview
 
+> ⚠️ **Important Change**: Starting from version 1.0.2, resource paths use `spartan_weaponry_unofficial` (with underscores).
+
 ```
-assets/spartanweaponryunofficial/
+assets/spartan_weaponry_unofficial/
 ├── blockstates/          # Block states (skulls)
 ├── lang/                 # Language files
 ├── models/
@@ -478,25 +480,29 @@ The mod supports the following languages:
 ```json
 {
   // Item names
-  "item.spartanweaponryunofficial.{material}_{weapon_type}": "Weapon Name",
+  "item.spartan_weaponry_unofficial.{material}_{weapon_type}": "Weapon Name",
+  
+  // Strengthened weapons
+  "item.spartan_weaponry_unofficial.longbow_{material}_strengthened": "Material-Strengthened Longbow",
+  "item.spartan_weaponry_unofficial.heavy_crossbow_{material}_strengthened": "Material-Strengthened Heavy Crossbow",
   
   // Custom material items (using %s placeholder)
-  "item.spartanweaponryunofficial.custom_{weapon_type}": "%s Weapon Name",
+  "item.spartan_weaponry_unofficial.custom_{weapon_type}": "%s Weapon Name",
   
   // Sound subtitles
-  "subtitle.spartanweaponryunofficial.{sound_event}": "Subtitle Text",
+  "subtitle.spartan_weaponry_unofficial.{sound_event}": "Subtitle Text",
   
   // Weapon traits
-  "trait.spartanweaponryunofficial.{trait_name}": "Trait Display Name",
-  "trait.spartanweaponryunofficial.{trait_name}.desc": "Trait Description",
+  "trait.spartan_weaponry_unofficial.{trait_name}": "Trait Display Name",
+  "trait.spartan_weaponry_unofficial.{trait_name}.desc": "Trait Description",
   
   // Status effects
-  "effect.spartanweaponryunofficial.{effect_name}": "Effect Name",
+  "effect.spartan_weaponry_unofficial.{effect_name}": "Effect Name",
   
   // Creative mode item groups
-  "itemGroup.spartanweaponryunofficial.basic": "Spartan Weaponry: Vanilla Materials",
-  "itemGroup.spartanweaponryunofficial.modded": "Spartan Weaponry: Modded Materials",
-  "itemGroup.spartanweaponryunofficial.arrows_bolts": "Spartan Weaponry: Arrows & Bolts"
+  "itemGroup.spartan_weaponry_unofficial.basic": "Spartan Weaponry: Vanilla Materials",
+  "itemGroup.spartan_weaponry_unofficial.modded": "Spartan Weaponry: Modded Materials",
+  "itemGroup.spartan_weaponry_unofficial.arrows_bolts": "Spartan Weaponry: Arrows & Bolts"
 }
 ```
 
@@ -510,7 +516,7 @@ Here's an example resource pack structure for replacing iron weapon textures:
 MyResourcePack/
 ├── pack.mcmeta
 └── assets/
-    └── spartanweaponryunofficial/
+    └── spartan_weaponry_unofficial/
         └── textures/
             └── item/
                 ├── iron_longsword.png
@@ -595,4 +601,4 @@ Projectile entity textures (arrows, bolts) are located in `textures/entity/proje
 
 ---
 
-*Document Version: 1.0 | For Spartan Weaponry Unofficial for NeoForge 1.21.1*
+*Document Version: 1.0.2 | Updated 2026-02-07 | For Spartan Weaponry Unofficial for NeoForge 1.21.1*

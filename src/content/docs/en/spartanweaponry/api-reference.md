@@ -24,6 +24,7 @@ repositories {
 dependencies {
     // Replace xxxxx with the specific Project ID and File ID
     // Example: implementation fg.deobf("curse.maven:spartan-weaponry-unofficial-12345:67890")
+    // Note: Mod ID uses underscores spartan_weaponry_unofficial
     implementation fg.deobf("curse.maven:spartan-weaponry-unofficial-xxxxx:yyyyy")
 }
 ```
@@ -31,6 +32,8 @@ dependencies {
 ## 🚀 Quick Start
 
 The main API entry point is the `org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI` class.
+
+> ⚠️ **Important Change**: Starting from version 1.0.2, the Mod ID has been changed to `spartan_weaponry_unofficial`.
 
 ### 1. Define Weapon Material
 
@@ -102,30 +105,83 @@ public MyMod() {
 
 All methods are located in the `SpartanWeaponryAPI` class and require a `WeaponMaterial` parameter.
 
-| Method Name | Description | Generated Registry Name Example |
-| :--- | :--- | :--- |
-| `createDagger` | Dagger | `dagger_{material}` |
-| `createParryingDagger` | Parrying Dagger | `parrying_dagger_{material}` |
-| `createLongsword` | Longsword | `longsword_{material}` |
-| `createKatana` | Katana | `katana_{material}` |
-| `createSaber` | Saber | `saber_{material}` |
-| `createRapier` | Rapier | `rapier_{material}` |
-| `createGreatsword` | Greatsword | `greatsword_{material}` |
-| `createBattleHammer` | Battle Hammer | `battle_hammer_{material}` |
-| `createWarhammer` | Warhammer | `warhammer_{material}` |
-| `createSpear` | Spear | `spear_{material}` |
-| `createHalberd` | Halberd | `halberd_{material}` |
-| `createPike` | Pike | `pike_{material}` |
-| `createLance` | Lance | `lance_{material}` |
-| `createLongbow` | Longbow | `longbow_{material}` |
-| `createHeavyCrossbow` | Heavy Crossbow | `heavy_crossbow_{material}` |
-| `createThrowingKnife` | Throwing Knife | `throwing_knife_{material}` |
-| `createTomahawk` | Tomahawk | `tomahawk_{material}` |
-| `createJavelin` | Javelin | `javelin_{material}` |
-| `createBoomerang` | Boomerang | `boomerang_{material}` |
-| `createMace` | Mace | `mace_{material}` |
-| `createQuarterstaff` | Quarterstaff | `quarterstaff_{material}` |
-| `createGlaive` | Glaive | `glaive_{material}` |
+| Method Name | Description | Registry Name Format | Localization Key Format |
+| :--- | :--- | :--- | :--- |
+| `createDagger` | Dagger | `{material}_dagger` | `item.spartan_weaponry_unofficial.{material}_dagger` |
+| `createParryingDagger` | Parrying Dagger | `{material}_parrying_dagger` | `item.spartan_weaponry_unofficial.{material}_parrying_dagger` |
+| `createLongsword` | Longsword | `{material}_longsword` | `item.spartan_weaponry_unofficial.{material}_longsword` |
+| `createKatana` | Katana | `{material}_katana` | `item.spartan_weaponry_unofficial.{material}_katana` |
+| `createSaber` | Saber | `{material}_saber` | `item.spartan_weaponry_unofficial.{material}_saber` |
+| `createRapier` | Rapier | `{material}_rapier` | `item.spartan_weaponry_unofficial.{material}_rapier` |
+| `createGreatsword` | Greatsword | `{material}_greatsword` | `item.spartan_weaponry_unofficial.{material}_greatsword` |
+| `createBattleHammer` | Battle Hammer | `{material}_battle_hammer` | `item.spartan_weaponry_unofficial.{material}_battle_hammer` |
+| `createWarhammer` | Warhammer | `{material}_warhammer` | `item.spartan_weaponry_unofficial.{material}_warhammer` |
+| `createSpear` | Spear | `{material}_spear` | `item.spartan_weaponry_unofficial.{material}_spear` |
+| `createHalberd` | Halberd | `{material}_halberd` | `item.spartan_weaponry_unofficial.{material}_halberd` |
+| `createPike` | Pike | `{material}_pike` | `item.spartan_weaponry_unofficial.{material}_pike` |
+| `createLance` | Lance | `{material}_lance` | `item.spartan_weaponry_unofficial.{material}_lance` |
+| `createLongbow` | Strengthened Longbow | `longbow_{material}_strengthened` | `item.spartan_weaponry_unofficial.longbow_{material}_strengthened` |
+| `createHeavyCrossbow` | Strengthened Heavy Crossbow | `heavy_crossbow_{material}_strengthened` | `item.spartan_weaponry_unofficial.heavy_crossbow_{material}_strengthened` |
+| `createThrowingKnife` | Throwing Knife | `{material}_throwing_knife` | `item.spartan_weaponry_unofficial.{material}_throwing_knife` |
+| `createTomahawk` | Tomahawk | `{material}_tomahawk` | `item.spartan_weaponry_unofficial.{material}_tomahawk` |
+| `createJavelin` | Javelin | `{material}_javelin` | `item.spartan_weaponry_unofficial.{material}_javelin` |
+| `createBoomerang` | Boomerang | `{material}_boomerang` | `item.spartan_weaponry_unofficial.{material}_boomerang` |
+| `createMace` | Mace | `{material}_mace` | `item.spartan_weaponry_unofficial.{material}_mace` |
+| `createQuarterstaff` | Quarterstaff | `{material}_quarterstaff` | `item.spartan_weaponry_unofficial.{material}_quarterstaff` |
+| `createGlaive` | Glaive | `{material}_glaive` | `item.spartan_weaponry_unofficial.{material}_glaive` |
+
+---
+
+## 📝 Naming Convention Details
+
+### Melee and Throwing Weapons
+
+Melee and throwing weapons use the `{material}_{weapon}` format:
+
+```java
+// Melee weapon registration example
+public static final DeferredHolder<Item, Item> IRON_LONGSWORD = ITEMS.register(
+    "iron_longsword",  // {material}_{weapon} format
+    () -> SpartanWeaponryAPI.createLongsword(MyModMaterials.IRON)
+);
+
+// Throwing weapon registration example
+public static final DeferredHolder<Item, Item> DIAMOND_THROWING_KNIFE = ITEMS.register(
+    "diamond_throwing_knife",  // {material}_{weapon} format
+    () -> SpartanWeaponryAPI.createThrowingKnife(MyModMaterials.DIAMOND)
+);
+
+// Localization key format
+// "item.spartan_weaponry_unofficial.iron_longsword": "Iron Longsword"
+// "item.spartan_weaponry_unofficial.diamond_throwing_knife": "Diamond Throwing Knife"
+```
+
+### Strengthened Weapons
+
+Starting from version 1.0.3, **longbows and heavy crossbows** created via the extension API use a special format `{weapontype}_{material}_strengthened`:
+
+```java
+// Longbow registration example
+public static final DeferredHolder<Item, Item> DIAMOND_LONGBOW = ITEMS.register(
+    "longbow_diamond_strengthened",  // Note format: longbow_{material}_strengthened
+    () -> SpartanWeaponryAPI.createLongbow(WeaponMaterial.DIAMOND)
+);
+
+// Heavy crossbow registration example  
+public static final DeferredHolder<Item, Item> IRON_HEAVY_CROSSBOW = ITEMS.register(
+    "heavy_crossbow_iron_strengthened",  // Format: heavy_crossbow_{material}_strengthened
+    () -> SpartanWeaponryAPI.createHeavyCrossbow(WeaponMaterial.IRON)
+);
+
+// Localization key format
+// "item.spartan_weaponry_unofficial.longbow_diamond_strengthened": "Diamond-Strengthened Longbow"
+// "item.spartan_weaponry_unofficial.heavy_crossbow_iron_strengthened": "Iron-Strengthened Heavy Crossbow"
+```
+
+**Texture file naming**: Strengthened weapon texture files **do not include** the `_strengthened` suffix:
+- Registry name: `longbow_diamond_strengthened`
+- Texture path: `textures/item/diamond_longbow_standby.png` (no strengthened)
+- Texture path: `textures/item/iron_heavy_crossbow_standby.png` (no strengthened)
 
 ---
 
@@ -141,7 +197,7 @@ Traits are usually automatically assigned via Tags, but you can also specify the
 
 ### Adding Traits via Tags (Recommended)
 
-Create a JSON file under `data/spartanweaponry/tags/weapon_traits/`:
+Create a JSON file under `data/spartan_weaponry_unofficial/tags/weapon_traits/`:
 
 ```json
 {
