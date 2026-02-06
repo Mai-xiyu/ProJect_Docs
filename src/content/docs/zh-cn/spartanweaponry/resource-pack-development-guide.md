@@ -1,19 +1,16 @@
 ---
 title: Spartan Weaponry Unofficial 资源包开发指南
 description: 为资源包作者提供的完整纹理、模型和音效替换指南
-version: 1.0.3
 ---
 
 # Spartan Weaponry Unofficial 资源包开发指南
 
 本文档为资源包作者提供了 `Spartan Weaponry Unofficial` 模组的资源结构详解，帮助您创建自定义纹理、模型或音效。
 
-**当前版本**: 1.0.3  
-**Mod ID**: `spartan_weaponry_unofficial` (使用下划线)
 
 ## 📁 资源目录结构概览
 
-> ⚠️ **重要变更**: 从 1.0.3 版本开始，资源路径使用 `spartan_weaponry_unofficial` (下划线)。
+> ⚠️ **重要变更**: 从 1.0.2 版本开始，资源路径使用 `spartan_weaponry_unofficial` (下划线)。
 
 ```
 assets/spartan_weaponry_unofficial/
@@ -609,5 +606,5 @@ MyResourcePack/
 
 ---
 
-*文档版本: 1.0.3 | 适用于 Spartan Weaponry Unofficial for NeoForge 1.21.1*  
+*文档版本: 1.0.2 | 适用于 Spartan Weaponry Unofficial for NeoForge 1.21.1*  
 *更新日期: 2026-02-07*
