@@ -13,22 +13,7 @@ This document provides the complete API development guide for the `Spartan Shiel
 >
 > 💡 **API Package**: `org.xiyu.spartanshieldsunofficial.api`
 
-## 📐 Architecture Overview
-
-The API follows a three-layer architecture. Addon mods only need to import the `api.*` package:
-
-```
-┌────────────────────────────────────────────────────┐
-│  Addon Mod Layer                                    │
-│  Only imports api.*, uses ShieldBuilder to create   │
-├────────────────────────────────────────────────────┤
-│  API Layer (api/)                                   │
-│  Interfaces + Builder + Registry + Abstract classes │
-├────────────────────────────────────────────────────┤
-│  Internal Implementation (item/, util/, client/)    │
-│  Free to refactor without affecting addons          │
-└────────────────────────────────────────────────────┘
-```
+## 📚 API Overview
 
 ### API Package Structure
 
