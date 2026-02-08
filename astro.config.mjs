@@ -83,6 +83,21 @@ export default defineConfig({
                translations: { en: 'Resource Pack Development Guide' }
              }
           ]
+        },
+        {
+          label: 'Spartan Shields',
+          items: [
+             {
+               label: '简介',
+               slug: 'spartan_shields_unofficial/intro',
+               translations: { en: 'Introduction' }
+             },
+             {
+               label: 'API 参考',
+               slug: 'spartan_shields_unofficial/api-reference',
+               translations: { en: 'API Reference' }
+             }
+          ]
         }
       ],
     }),
