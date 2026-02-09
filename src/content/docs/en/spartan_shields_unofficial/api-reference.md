@@ -39,6 +39,21 @@ api/
 
 ---
 
+## 📚 Example Addon Repository
+
+For a complete working example of how to use the Spartan Shields API, see the official example addon:
+
+**[Example Add-on for Spartan Shields Unofficial](https://github.com/Mai-xiyu/Example-Add-on-for-Spartan-Shields-Unofficial)**
+
+This repository demonstrates:
+- Creating shields with custom materials
+- Registering custom resource types
+- Implementing block handlers and effects
+- Custom tower shield rendering
+- Proper mod structure and configuration
+
+---
+
 ## 📦 Dependency Configuration (Gradle)
 
 Add Spartan Shields Unofficial as a dependency in your `build.gradle`:
@@ -146,6 +161,7 @@ DeferredHolder<Item, ?> MITHRIL_TOWER = ITEMS.register("mithril_tower_shield",
 | `blockEffect(Holder<MobEffect>, int, int)` | Apply status effect on block (stackable) | Optional |
 | `blockHandler(IShieldBlockHandler)` | Execute custom logic on block (stackable) | Optional |
 | `poweredBy(IResourceType, int, int)` | Power shield with a resource | Either this or `material` |
+| `bashable(boolean)` | Enable shield bash, default `true` | Optional |
 | `build()` | Build into `Supplier<? extends ShieldBaseItem>` | Required |
 
 #### `ShieldType` Enum
@@ -310,10 +326,13 @@ public class MyDataComponents {
 }
 
 // Step 2: Register the resource type in your mod constructor
+// Note: Pass the DeferredHolder directly (it implements Supplier), don't call .get()!
+// Registry events haven't fired yet during mod constructor phase.
+// Calling .get() at this stage would throw NullPointerException.
 SpartanShieldsAPI.registerResourceType(new SimpleResourceType(
     ResourceLocation.fromNamespaceAndPath("botania", "mana"),   // Globally unique ID
     Component.literal("Mana"),                                   // Display name
-    MyDataComponents.STORED_MANA.get(),                          // DataComponent
+    MyDataComponents.STORED_MANA,                                // DeferredHolder IS-A Supplier
     0x00C6FF                                                     // Bar color
 ));
 
@@ -353,7 +372,7 @@ import org.xiyu.spartanshieldsunofficial.api.resource.AbstractEnergyStorage;
 SpartanShieldsAPI.registerResourceType(new AbstractEnergyStorage(
     ResourceLocation.fromNamespaceAndPath("thermal", "redstone_flux"),
     Component.literal("RF"),
-    ModDataComponents.STORED_ENERGY.get(),  // Reuses FE DataComponent
+    ModDataComponents.STORED_ENERGY,        // DeferredHolder IS-A Supplier, pass directly
     0xCC4C4C                                 // Red bar color
 ));
 ```
@@ -441,6 +460,34 @@ Add your shields in datapack Tag JSON files:
   ]
 }
 ```
+
+:::caution[Shield Bash]
+Shields created via `ShieldBuilder` have bash functionality **enabled by default** (`bashable(true)`). 
+They do not require manual addition to the `shields_with_bash` Tag in datapacks.
+
+If you want to disable bash for a specific shield (e.g., purely defensive shields), call `.bashable(false)`:
+
+```java
+ShieldBuilder.create()
+    .material(mithril)
+    .bashable(false)   // Disable bash
+    .build()
+```
+
+If you need to manage bash via datapacks (e.g., for configurable resource packs), addon mods can still add shields to the `shields_with_bash` Tag:
+
+```json
+// data/spartan_shields_unofficial/tags/item/shields_with_bash.json
+{
+  "replace": false,
+  "values": [
+    "mymod:mithril_shield"
+  ]
+}
+```
+
+Similarly, to enable enchantment support, add your shields to the `basic_shields` or `tower_shields` Tag.
+:::
 
 ---
 
@@ -559,11 +606,11 @@ public static final DeferredHolder<Item, ?> FLUX_SHIELD =
 public MyMod(IEventBus modBus) {
     MyDataComponents.COMPONENTS.register(modBus);
 
-    // Register Mana resource type (only 4 parameters!)
+    // Register Mana resource type — pass DeferredHolder directly
     SpartanShieldsAPI.registerResourceType(new SimpleResourceType(
         ResourceLocation.fromNamespaceAndPath("botania", "mana"),
         Component.literal("Mana"),
-        MyDataComponents.STORED_MANA.get(),
+        MyDataComponents.STORED_MANA,  // DeferredHolder IS-A Supplier
         0x00C6FF
     ));
 }
@@ -588,7 +635,7 @@ public static final DeferredHolder<Item, ?> MANA_SHIELD =
 SpartanShieldsAPI.registerResourceType(new SimpleResourceType(
     ResourceLocation.fromNamespaceAndPath("create", "stress_units"),
     Component.literal("SU"),
-    MyDataComponents.STORED_STRESS.get(),
+    MyDataComponents.STORED_STRESS,  // DeferredHolder IS-A Supplier
     0xFFED50
 ));
 
@@ -651,7 +698,24 @@ The main mod's `ModDataComponents.STORED_ENERGY` is already properly configured 
 
 ### 3. Resource Type Registration Timing
 
-Must call `SpartanShieldsAPI.registerResourceType()` in **your mod constructor**. NeoForge's mod loading order doesn't guarantee `FMLCommonSetupEvent` ordering, and late registration will cause other mods' `ResourceRegistry.get()` to return empty.
+Must call `SpartanShieldsAPI.registerResourceType()` in **your mod constructor**. 
+NeoForge's mod loading order doesn't guarantee `FMLCommonSetupEvent` ordering. 
+Late registration will cause other mods' `ResourceRegistry.get()` to return empty.
+
+⚠️ **`DeferredHolder` is not bound during mod constructor phase**. 
+Calling `.get()` will throw `NullPointerException`. 
+
+Both `SimpleResourceType` and `AbstractEnergyStorage` provide constructors that accept `Supplier<DataComponentType<Integer>>`. 
+NeoForge's `DeferredHolder` implements the `Supplier` interface. 
+Therefore, **just pass the `DeferredHolder` directly** — it will be resolved on first actual use:
+
+```java
+// ✅ Correct — pass DeferredHolder directly
+new SimpleResourceType(id, name, MyDataComponents.STORED_MANA, color)
+
+// ❌ Wrong — .get() in mod constructor will crash
+new SimpleResourceType(id, name, MyDataComponents.STORED_MANA.get(), color)
+```
 
 ### 4. Registration Conflict Prevention
 

@@ -41,6 +41,21 @@ api/
 
 ---
 
+## 📚 示例附属模组仓库
+
+如需了解如何使用 Spartan Shields API 的完整工作示例，请参阅官方示例附属模组：
+
+**[Spartan Shields Unofficial 示例附属模组](https://github.com/Mai-xiyu/Example-Add-on-for-Spartan-Shields-Unofficial)**
+
+该仓库演示了：
+- 使用自定义材质创建盾牌
+- 注册自定义资源类型
+- 实现格挡处理器和效果
+- 自定义塔盾渲染
+- 正确的模组结构和配置
+
+---
+
 ## 📦 依赖配置 (Gradle)
 
 在 `build.gradle` 中添加 Spartan Shields Unofficial 作为依赖项：
