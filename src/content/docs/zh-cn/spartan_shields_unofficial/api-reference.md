@@ -148,6 +148,7 @@ DeferredHolder<Item, ?> MITHRIL_TOWER = ITEMS.register("mithril_tower_shield",
 | `blockEffect(Holder<MobEffect>, int, int)` | 格挡时施加状态效果（可叠加） | 可选 |
 | `blockHandler(IShieldBlockHandler)` | 格挡时执行自定义逻辑（可叠加） | 可选 |
 | `poweredBy(IResourceType, int, int)` | 使盾牌由资源供能 | 与 `material` 二选一 |
+| `bashable(boolean)` | 是否启用盾牌猛击，默认 `true` | 可选 |
 | `build()` | 构建为 `Supplier<? extends ShieldBaseItem>` | 必需 |
 
 #### `ShieldType` 枚举
@@ -312,10 +313,12 @@ public class MyDataComponents {
 }
 
 // 第二步：在模组构造器中注册资源类型
+// 注意：直接传入 DeferredHolder（它实现了 Supplier），不要调用 .get()！
+// 模组构造器阶段注册表事件尚未触发，.get() 会抛出 NullPointerException
 SpartanShieldsAPI.registerResourceType(new SimpleResourceType(
     ResourceLocation.fromNamespaceAndPath("botania", "mana"),   // 全局唯一 ID
     Component.literal("Mana"),                                   // 显示名
-    MyDataComponents.STORED_MANA.get(),                          // DataComponent
+    MyDataComponents.STORED_MANA,                                // DeferredHolder IS-A Supplier
     0x00C6FF                                                     // 耐久条颜色
 ));
 
@@ -355,7 +358,7 @@ import org.xiyu.spartanshieldsunofficial.api.resource.AbstractEnergyStorage;
 SpartanShieldsAPI.registerResourceType(new AbstractEnergyStorage(
     ResourceLocation.fromNamespaceAndPath("thermal", "redstone_flux"),
     Component.literal("RF"),
-    ModDataComponents.STORED_ENERGY.get(),  // 复用 FE 的 DataComponent
+    ModDataComponents.STORED_ENERGY,        // DeferredHolder IS-A Supplier，直接传入
     0xCC4C4C                                 // 红色耐久条
 ));
 ```
@@ -443,6 +446,33 @@ ResourceRegistry.get(ResourceLocation.fromNamespaceAndPath("botania", "mana"))
   ]
 }
 ```
+
+:::caution[盾牌猛击]
+通过 `ShieldBuilder` 创建的盾牌**默认启用**猛击功能（`bashable(true)`），无需手动添加数据包 Tag。
+
+如果想禁用某个盾牌的猛击（例如纯防御型盾牌），调用 `.bashable(false)`：
+
+```java
+ShieldBuilder.create()
+    .material(mithril)
+    .bashable(false)   // 禁用猛击
+    .build()
+```
+
+如果确实需要通过数据包管理猛击（例如可配置的资源包），附属模组仍可将盾牌加入 `shields_with_bash` Tag：
+
+```json
+// data/spartan_shields_unofficial/tags/item/shields_with_bash.json
+{
+  "replace": false,
+  "values": [
+    "mymod:mithril_shield"
+  ]
+}
+```
+
+同理，如需附魔支持，仍需将盾牌加入 `basic_shields` 或 `tower_shields` Tag。
+:::
 
 ---
 
@@ -561,11 +591,11 @@ public static final DeferredHolder<Item, ?> FLUX_SHIELD =
 public MyMod(IEventBus modBus) {
     MyDataComponents.COMPONENTS.register(modBus);
 
-    // 注册 Mana 资源类型（只需 4 个参数！）
+    // 注册 Mana 资源类型 — 直接传 DeferredHolder
     SpartanShieldsAPI.registerResourceType(new SimpleResourceType(
         ResourceLocation.fromNamespaceAndPath("botania", "mana"),
         Component.literal("Mana"),
-        MyDataComponents.STORED_MANA.get(),
+        MyDataComponents.STORED_MANA,  // DeferredHolder IS-A Supplier
         0x00C6FF
     ));
 }
@@ -590,7 +620,7 @@ public static final DeferredHolder<Item, ?> MANA_SHIELD =
 SpartanShieldsAPI.registerResourceType(new SimpleResourceType(
     ResourceLocation.fromNamespaceAndPath("create", "stress_units"),
     Component.literal("SU"),
-    MyDataComponents.STORED_STRESS.get(),
+    MyDataComponents.STORED_STRESS,  // DeferredHolder IS-A Supplier
     0xFFED50
 ));
 
@@ -654,6 +684,16 @@ builder.persistent(Codec.INT)
 ### 3. 资源类型注册时机
 
 必须在**模组构造器**中调用 `SpartanShieldsAPI.registerResourceType()`。NeoForge 的模组加载顺序不保证 `FMLCommonSetupEvent` 的先后，太晚注册会导致其他模组的 `ResourceRegistry.get()` 返回空。
+
+⚠️ **`DeferredHolder` 在模组构造器阶段尚未绑定**，调用 `.get()` 会抛出 `NullPointerException`。`SimpleResourceType` 和 `AbstractEnergyStorage` 都提供了接受 `Supplier<DataComponentType<Integer>>` 的构造器，而 NeoForge 的 `DeferredHolder` 本身实现了 `Supplier` 接口，因此**直接传入 `DeferredHolder` 即可**——首次实际使用时才会解析：
+
+```java
+// ✅ 正确 — 直接传 DeferredHolder
+new SimpleResourceType(id, name, MyDataComponents.STORED_MANA, color)
+
+// ❌ 错误 — 模组构造器中 .get() 会崩
+new SimpleResourceType(id, name, MyDataComponents.STORED_MANA.get(), color)
+```
 
 ### 4. 注册防冲突
 
