@@ -327,7 +327,8 @@ public class MyDataComponents {
 
 // Step 2: Register the resource type in your mod constructor
 // Note: Pass the DeferredHolder directly (it implements Supplier), don't call .get()!
-// During mod constructor phase, registry events haven't fired yet; .get() would throw NullPointerException
+// Registry events haven't fired yet during mod constructor phase.
+// Calling .get() at this stage would throw NullPointerException.
 SpartanShieldsAPI.registerResourceType(new SimpleResourceType(
     ResourceLocation.fromNamespaceAndPath("botania", "mana"),   // Globally unique ID
     Component.literal("Mana"),                                   // Display name
@@ -461,7 +462,8 @@ Add your shields in datapack Tag JSON files:
 ```
 
 :::caution[Shield Bash]
-Shields created via `ShieldBuilder` have bash functionality **enabled by default** (`bashable(true)`), so no manual datapack Tag addition is needed.
+Shields created via `ShieldBuilder` have bash functionality **enabled by default** (`bashable(true)`). 
+They do not require manual addition to the `shields_with_bash` Tag in datapacks.
 
 If you want to disable bash for a specific shield (e.g., purely defensive shields), call `.bashable(false)`:
 
@@ -696,9 +698,16 @@ The main mod's `ModDataComponents.STORED_ENERGY` is already properly configured 
 
 ### 3. Resource Type Registration Timing
 
-Must call `SpartanShieldsAPI.registerResourceType()` in **your mod constructor**. NeoForge's mod loading order doesn't guarantee `FMLCommonSetupEvent` ordering, and late registration will cause other mods' `ResourceRegistry.get()` to return empty.
+Must call `SpartanShieldsAPI.registerResourceType()` in **your mod constructor**. 
+NeoForge's mod loading order doesn't guarantee `FMLCommonSetupEvent` ordering. 
+Late registration will cause other mods' `ResourceRegistry.get()` to return empty.
 
-⚠️ **`DeferredHolder` is not bound during mod constructor phase**. Calling `.get()` will throw `NullPointerException`. Both `SimpleResourceType` and `AbstractEnergyStorage` provide constructors that accept `Supplier<DataComponentType<Integer>>`, and NeoForge's `DeferredHolder` itself implements the `Supplier` interface, so **just pass the `DeferredHolder` directly** — it will be resolved on first actual use:
+⚠️ **`DeferredHolder` is not bound during mod constructor phase**. 
+Calling `.get()` will throw `NullPointerException`. 
+
+Both `SimpleResourceType` and `AbstractEnergyStorage` provide constructors that accept `Supplier<DataComponentType<Integer>>`. 
+NeoForge's `DeferredHolder` implements the `Supplier` interface. 
+Therefore, **just pass the `DeferredHolder` directly** — it will be resolved on first actual use:
 
 ```java
 // ✅ Correct — pass DeferredHolder directly
