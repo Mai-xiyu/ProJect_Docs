@@ -42,6 +42,7 @@ description: Developer documentation for OneKeyMiner API
   - [Statistics Tracking](#example-3-statistics-tracking)
   - [Custom Tool Logic](#example-4-custom-tool-logic)
   - [Addon Development](#example-5-addon-development)
+  - [Jade Integration (Show Chain Info)](#example-6-jade-integration-show-chain-info)
 - [Class Reference](#class-reference)
 - [Best Practices](#best-practices)
 - [FAQ](#faq)
