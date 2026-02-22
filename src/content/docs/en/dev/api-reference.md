@@ -42,7 +42,6 @@ description: Developer documentation for OneKeyMiner API
   - [Statistics Tracking](#example-3-statistics-tracking)
   - [Custom Tool Logic](#example-4-custom-tool-logic)
   - [Addon Development](#example-5-addon-development)
-        - [Jade Integration (Show Chain Info)](#example-6-jade-integration-show-chain-info)
 - [Class Reference](#class-reference)
 - [Best Practices](#best-practices)
 - [FAQ](#faq)
@@ -584,6 +583,18 @@ resolver.clearCache();
 | `pattern*` | Prefix match | `minecraft:*` |
 | `*pattern` | Suffix match | `*_ore` |
 
+### Conventional Tags Across Platforms
+
+Conventional tag namespace differs across platforms. OneKeyMiner adapts automatically at runtime via `PlatformServices.getConventionalTagPrefix()`:
+
+| Platform | Conventional Tag Prefix | Example |
+|----------|--------------------------|---------|
+| Fabric | `c` | `#c:ores`, `#c:seeds` |
+| NeoForge | `c` | `#c:ores`, `#c:seeds` |
+| Forge | `forge` | `#forge:ores`, `#forge:seeds` |
+
+> **Note**: When using tags in config files and API calls, you don't need to care about platform differences — OneKeyMiner will use the correct prefix for the current platform. If you need to build a conventional tag in code, call `PlatformServices.getInstance().getConventionalTagPrefix()`.
+
 ---
 
 ## Platform Services
@@ -610,6 +621,9 @@ Path configDir = platform.getConfigDirectory();
 // Check/set chain mode for player
 boolean active = platform.isChainModeActive(player);
 platform.setChainModeActive(player, true);
+
+// Get conventional tag prefix for current platform
+String prefix = platform.getConventionalTagPrefix();  // Fabric/NeoForge="c", Forge="forge"
 ```
 
 ### Platform-Specific Implementations
@@ -660,6 +674,29 @@ ConfigManager.reload();
 
 // Save current config to file
 ConfigManager.save();
+```
+
+### Config API (for Addons)
+
+Addons can use config read/write methods provided by `OneKeyMinerAPI`. After modification, changes are automatically synced to the server via network:
+
+```java
+import org.xiyu.onekeyminer.api.OneKeyMinerAPI;
+
+// Read config
+String shape = OneKeyMinerAPI.getSelectedShape();           // Current mining shape
+boolean drops = OneKeyMinerAPI.isTeleportDropsEnabled();    // Teleport drops?
+boolean exp = OneKeyMinerAPI.isTeleportExpEnabled();        // Teleport XP?
+
+// Modify config (auto network sync)
+OneKeyMinerAPI.setSelectedShape("SPHERE");
+OneKeyMinerAPI.setTeleportDropsEnabled(true);
+OneKeyMinerAPI.setTeleportExpEnabled(false);
+
+// Listen for config changes
+OneKeyMinerAPI.addConfigChangeListener(key -> {
+    LOGGER.info("Config changed: {}", key);
+});
 ```
 
 ---
@@ -1034,6 +1071,14 @@ public class OKMChainComponent implements IBlockComponentProvider {
 | `isToolAllowed(ItemStack)` | Check if tool is allowed for mining |
 | `isInteractionToolAllowed(ItemStack)` | Check if tool is allowed for interaction |
 | `isPlantableAllowed(ItemStack)` | Check if item is plantable |
+| `getSelectedShape()` | Get currently selected mining shape name |
+| `setSelectedShape(String)` | Set mining shape (auto network sync) |
+| `isTeleportDropsEnabled()` | Get whether teleport drops is enabled |
+| `setTeleportDropsEnabled(boolean)` | Set whether teleport drops is enabled (auto network sync) |
+| `isTeleportExpEnabled()` | Get whether teleport XP is enabled |
+| `setTeleportExpEnabled(boolean)` | Set whether teleport XP is enabled (auto network sync) |
+| `addConfigChangeListener(Consumer)` | Register config change listener |
+| `removeConfigChangeListener(Consumer)` | Remove config change listener |
 
 ### ChainActionContext.Builder
 
@@ -1059,8 +1104,37 @@ public class OKMChainComponent implements IBlockComponentProvider {
 | `durabilityUsed()` | Get durability consumed |
 | `hungerUsed()` | Get hunger consumed |
 | `stopReason()` | Get stop reason |
+| `collectedDrops()` | Get collected drops (mining/harvesting only) |
+| `experienceCollected()` | Get collected experience (mining only) |
 | `isSuccess()` | Check if at least one block was processed |
 | `getSummary()` | Get summary string |
+
+### PreActionEvent
+
+| Method | Description |
+|--------|-------------|
+| `getPlayer()` | Get the player performing the action |
+| `getLevel()` | Get the world instance |
+| `getOriginPos()` | Get origin block position |
+| `getOriginState()` | Get origin block state |
+| `getActionType()` | Get action type |
+| `getHeldItem()` | Get held item |
+| `getTargetPositions()` | Get target position set (modifiable) |
+| `isCancelled()` | Check if cancelled |
+| `cancel()` | Cancel the action |
+| `setCancelled(boolean)` | Set cancelled state |
+
+### PostActionEvent
+
+| Method | Description |
+|--------|-------------|
+| `getPlayer()` | Get the player performing the action |
+| `getLevel()` | Get the world instance |
+| `getOriginPos()` | Get origin block position |
+| `getActionType()` | Get action type |
+| `getResult()` | Get action result |
+| `getCollectedDrops()` | Convenience: get collected drops |
+| `getExperienceCollected()` | Convenience: get collected experience |
 
 ---
 
@@ -1121,6 +1195,28 @@ ChainEvents.registerPostActionListener(event -> {
 });
 ```
 
+### 6. Mod Initialization Timing
+
+Register integration content in your mod's main initialization method, and ensure OneKeyMiner is loaded:
+
+```java
+// Fabric
+@Override
+public void onInitialize() {
+    if (FabricLoader.getInstance().isModLoaded("onekeyminer")) {
+        MyOKMIntegration.init();
+    }
+}
+
+// Forge/NeoForge
+@SubscribeEvent
+public void onCommonSetup(FMLCommonSetupEvent event) {
+    if (ModList.get().isLoaded("onekeyminer")) {
+        event.enqueueWork(MyOKMIntegration::init);
+    }
+}
+```
+
 ---
 
 ## FAQ
@@ -1145,6 +1241,14 @@ A: Check:
 
 A: Yes, create a `ChainActionContext` and call `ChainActionLogic.execute()`.
 
+### Q: What is the execution order of event listeners?
+
+A: They run in registration order. If multiple mods register listeners, they are executed one by one in the order they were registered.
+
+### Q: Is the API backward compatible?
+
+A: Yes. The API is kept backward compatible. Minor version updates will not break existing integrations.
+
 ---
 
 ## Support
@@ -1154,10 +1258,10 @@ A: Yes, create a `ChainActionContext` and call `ChainActionLogic.execute()`.
 
 ---
 
-*Documentation Version: 1.6.0 | Last Updated: January 2026*
+*Documentation Version: 1.7.0 | Last Updated: January 2026*
 
 ---
 
-## License
+## Copyright Notice
 
 This project is licensed under **All Rights Reserved (ARR)**. You may not copy, modify, or distribute the code without permission from the author.
