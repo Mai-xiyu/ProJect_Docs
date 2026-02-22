@@ -385,12 +385,16 @@ int durabilityUsed = result.durabilityUsed(); // 消耗的耐久度
 int hungerUsed = result.hungerUsed();         // 消耗的饥饿值
 Set<BlockPos> positions = result.successPositions(); // 所有处理的位置
 
+// 获取收集的掉落物和经验值（仅挖矿和收割操作有数据）
+List<ItemStack> drops = result.collectedDrops();    // 收集的掉落物
+int exp = result.experienceCollected();              // 收集的经验值
+
 // 获取停止原因
 ChainActionResult.StopReason reason = result.stopReason();
 
 // 获取摘要字符串（用于日志/显示）
 String summary = result.getSummary();
-// 示例: "Mining: 32 blocks, stopped: MAX_BLOCKS"
+// 示例: "Mining: 32 blocks, 15 drops, 48 exp, stopped: MAX_BLOCKS"
 ```
 
 #### StopReason 枚举
@@ -495,6 +499,12 @@ public class PostActionEvent {
     
     // 获取操作结果
     ChainActionResult getResult();
+    
+    // 便捷方法：获取收集的掉落物（委托给 result）
+    List<ItemStack> getCollectedDrops();
+    
+    // 便捷方法：获取收集的经验值（委托给 result）
+    int getExperienceCollected();
 }
 ```
 
@@ -583,6 +593,19 @@ resolver.clearCache();
 | `pattern*` | 前缀匹配 | `minecraft:*` |
 | `*pattern` | 后缀匹配 | `*_ore` |
 
+### 平台共用标签
+
+不同平台的共用标签命名空间不同，OneKeyMiner 通过 `PlatformServices.getConventionalTagPrefix()` 在运行时自动适配：
+
+| 平台 | 共用标签前缀 | 示例 |
+|------|------------|------|
+| Fabric | `c` | `#c:ores`、`#c:seeds` |
+| NeoForge | `c` | `#c:ores`、`#c:seeds` |
+| Forge | `forge` | `#forge:ores`、`#forge:seeds` |
+
+> **注意**：在配置文件和 API 中使用标签时，无需关心平台差异——模组内部会自动使用当前平台的正确前缀。如果您需要在代码中手动构建共用标签，可以调用
+> `PlatformServices.getInstance().getConventionalTagPrefix()` 来获取当前平台的前缀。
+
 ---
 
 ## 平台服务
@@ -609,6 +632,9 @@ Path configDir = platform.getConfigDirectory();
 // 检查/设置玩家的连锁模式
 boolean active = platform.isChainModeActive(player);
 platform.setChainModeActive(player, true);
+
+// 获取当前平台的共用标签前缀
+String prefix = platform.getConventionalTagPrefix();  // Fabric/NeoForge="c", Forge="forge"
 ```
 
 ### 平台特定实现
@@ -659,6 +685,29 @@ ConfigManager.reload();
 
 // 保存当前配置到文件
 ConfigManager.save();
+```
+
+### Config API（面向附属模组）
+
+附属模组可用 `OneKeyMinerAPI` 提供的配置读写方法，修改后会自动通过网络同步到服务端：
+
+```java
+import org.xiyu.onekeyminer.api.OneKeyMinerAPI;
+
+// 读取配置
+String shape = OneKeyMinerAPI.getSelectedShape();      // 获取当前挖矿形状
+boolean drops = OneKeyMinerAPI.isTeleportDropsEnabled(); // 是否传送掉落物
+boolean exp = OneKeyMinerAPI.isTeleportExpEnabled();     // 是否传送经验
+
+// 修改配置（自动触发网络同步）
+OneKeyMinerAPI.setSelectedShape("SPHERE");
+OneKeyMinerAPI.setTeleportDropsEnabled(true);
+OneKeyMinerAPI.setTeleportExpEnabled(false);
+
+// 监听配置变更
+OneKeyMinerAPI.addConfigChangeListener(key -> {
+    LOGGER.info("配置已变更: {}", key);
+});
 ```
 
 ---
@@ -774,6 +823,15 @@ public class ActionStatsTracker {
                 .computeIfAbsent(playerId, k -> new ConcurrentHashMap<>())
                 .computeIfAbsent(actionType, k -> new AtomicLong(0))
                 .addAndGet(count);
+            
+            // 利用新的掉落物/经验数据
+            List<ItemStack> drops = event.getCollectedDrops();
+            int exp = event.getExperienceCollected();
+            if (!drops.isEmpty()) {
+                LOGGER.info("玩家 {} 通过 {} 收集了 {} 个掉落物, {} 经验",
+                    event.getPlayer().getName().getString(),
+                    actionType.getDisplayName(), drops.size(), exp);
+            }
             
             // 成就检查
             long total = getTotalActions(playerId, actionType);
@@ -1010,10 +1068,10 @@ public class OKMChainComponent implements IBlockComponentProvider {
 | `blacklistBlock(String)` | 将方块添加到黑名单 |
 | `blacklistBlock(Block)` | 将方块实例添加到黑名单 |
 | `unblacklistBlock(String)` | 从黑名单移除方块 |
-| `whitelistTool(String)` | 将工具添加到挖掘白名单 |
-| `blacklistTool(String)` | 将工具添加到挖掘黑名单 |
-| `whitelistInteractionTool(String)` | 将工具添加到交互白名单 |
-| `blacklistInteractionTool(String)` | 将工具添加到交互黑名单 |
+| `whitelistTool(String)` | 将工具添加到挖掘白名单（支持 `#tag` 格式） |
+| `blacklistTool(String)` | 将工具添加到挖掘黑名单（支持 `#tag` 格式） |
+| `whitelistInteractionTool(String)` | 将工具添加到交互白名单（支持 `#tag` 格式） |
+| `blacklistInteractionTool(String)` | 将工具添加到交互黑名单（支持 `#tag` 格式） |
 | `registerToolAction(String, ToolTargetType, ChainActionType, InteractionRule, List<String>)` | 注册自定义工具动作规则 |
 | `registerInteractionToolRule(String, ToolTargetType, InteractionRule, String...)` | 注册交互工具规则 |
 | `registerMiningToolRule(String, String...)` | 注册挖掘工具规则 |
@@ -1021,8 +1079,8 @@ public class OKMChainComponent implements IBlockComponentProvider {
 | `findToolActionForBlock(ItemStack, BlockState)` | 查询方块上的工具规则 |
 | `findToolActionForEntity(ItemStack, Entity)` | 查询实体上的工具规则 |
 | `hasToolActionRule(ItemStack, ChainActionType)` | 判断工具是否有规则 |
-| `whitelistPlantable(String)` | 将物品添加到可种植白名单 |
-| `blacklistPlantable(String)` | 将物品添加到可种植黑名单 |
+| `whitelistPlantable(String)` | 将物品添加到可种植白名单（支持 `#tag` 格式） |
+| `blacklistPlantable(String)` | 将物品添加到可种植黑名单（支持 `#tag` 格式） |
 | `addBlockToGroup(String, String)` | 将方块添加到分组 |
 | `areBlocksInSameGroup(Block, Block)` | 检查方块是否在同一组 |
 | `blocksShareTag(BlockState, BlockState)` | 检查方块是否共享任何标签 |
@@ -1031,6 +1089,14 @@ public class OKMChainComponent implements IBlockComponentProvider {
 | `isToolAllowed(ItemStack)` | 检查工具是否允许挖掘 |
 | `isInteractionToolAllowed(ItemStack)` | 检查工具是否允许交互 |
 | `isPlantableAllowed(ItemStack)` | 检查物品是否可种植 |
+| `getSelectedShape()` | 获取当前挖矿形状名称 |
+| `setSelectedShape(String)` | 设置挖矿形状（自动触发网络同步） |
+| `isTeleportDropsEnabled()` | 获取是否启用传送掉落物 |
+| `setTeleportDropsEnabled(boolean)` | 设置是否传送掉落物（自动触发网络同步） |
+| `isTeleportExpEnabled()` | 获取是否启用传送经验 |
+| `setTeleportExpEnabled(boolean)` | 设置是否传送经验（自动触发网络同步） |
+| `addConfigChangeListener(Consumer)` | 注册配置变更监听器 |
+| `removeConfigChangeListener(Consumer)` | 移除配置变更监听器 |
 
 ### ChainActionContext.Builder
 
@@ -1056,6 +1122,8 @@ public class OKMChainComponent implements IBlockComponentProvider {
 | `durabilityUsed()` | 获取消耗的耐久度 |
 | `hungerUsed()` | 获取消耗的饥饿值 |
 | `stopReason()` | 获取停止原因 |
+| `collectedDrops()` | 获取收集的掉落物列表（挖矿/收割时有数据） |
+| `experienceCollected()` | 获取收集的经验值（挖矿时有数据） |
 | `isSuccess()` | 检查是否至少处理了一个方块 |
 | `getSummary()` | 获取摘要字符串 |
 
@@ -1083,6 +1151,8 @@ public class OKMChainComponent implements IBlockComponentProvider {
 | `getOriginPos()` | 获取起始方块位置 |
 | `getActionType()` | 获取操作类型 |
 | `getResult()` | 获取操作结果 |
+| `getCollectedDrops()` | 便捷方法：获取收集的掉落物 |
+| `getExperienceCollected()` | 便捷方法：获取收集的经验值 |
 
 ---
 
@@ -1205,7 +1275,7 @@ A: 是的，API 保持向后兼容。次版本更新不会破坏现有集成。
 
 ---
 
-*文档版本: 1.6.0 | 最后更新: 2026年1月*
+*文档版本: 1.7.0 | 最后更新: 2026年1月*
 
 ---
 
