@@ -1265,4 +1265,4 @@ A: Yes. The API is kept backward compatible. Minor version updates will not brea
 
 ## Copyright Notice
 
-This project is licensed under **All Rights Reserved (ARR)**. You may not copy, modify, or distribute the code without permission from the author.
+This project is **All Rights Reserved (ARR)**. You may not copy, modify, or distribute the code without permission from the author.
