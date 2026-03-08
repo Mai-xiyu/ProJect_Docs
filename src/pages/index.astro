@@ -1,5 +1,9 @@
 ---
 layout: false
+
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+const zhCnPath = `${basePath}/zh-cn/`;
+const enPath = `${basePath}/en/`;
 ---
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -8,12 +12,11 @@ layout: false
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mai_xiyu Projects</title>
     <meta name="description" content="Mai_xiyu's Project Hub">
-    <script>
+    <script define:vars={{ zhCnPath, enPath }}>
         // 核心跳转逻辑（保留原逻辑并优化）
         const userLang = navigator.language || navigator.userLanguage;
         const isZhCN = userLang.toLowerCase().includes('zh');
-        const basePath = '/ProJect_Docs';
-        const targetPath = isZhCN ? `${basePath}/zh-cn/` : `${basePath}/en/`;
+        const targetPath = isZhCN ? zhCnPath : enPath;
         
         // 增加 1.5 秒延迟，让用户能看到精美的加载动画，提升感知体验
         setTimeout(() => {
@@ -142,7 +145,7 @@ layout: false
     </div>
 
     <noscript>
-        <meta http-equiv="refresh" content="0; url=/ProJect_Docs/zh-cn/">
+        <meta http-equiv="refresh" content={`0; url=${zhCnPath}`}>
     </noscript>
 </body>
 </html>

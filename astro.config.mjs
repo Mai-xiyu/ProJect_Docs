@@ -2,8 +2,10 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
+const site = process.env.SITE;
+
 export default defineConfig({
-  site: 'https://mai-xiyu.github.io',
+  ...(site ? { site } : {}),
   base: '/ProJect_Docs',
   integrations: [
     starlight({
