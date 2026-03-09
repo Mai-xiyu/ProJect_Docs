@@ -1,0 +1,78 @@
+---
+layout: false
+
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面未找到 | Mai_xiyu Projects</title>
+    <meta name="description" content="请求的文档页面不存在或已被移动。">
+    <style>
+        :root {
+            color-scheme: dark;
+            font-family: "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .skip-link {
+            position: absolute;
+            left: 16px;
+            top: 16px;
+            color: inherit;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transform: translateY(-200%);
+            transition: transform 0.2s ease;
+        }
+
+        .skip-link:focus {
+            transform: translateY(0);
+            background: #e2e8f0;
+            color: #0f172a;
+            outline: 2px solid #93c5fd;
+            outline-offset: 2px;
+        }
+
+        main {
+            width: min(100%, 720px);
+            padding: 32px;
+            border-radius: 16px;
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 12px 40px rgba(15, 23, 42, 0.35);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        a {
+            color: #93c5fd;
+        }
+    </style>
+</head>
+<body>
+    <a class="skip-link" href="#content">跳转到内容</a>
+    <main id="content">
+        <h1>页面未找到</h1>
+        <p>你访问的页面不存在、已被移动，或者链接填写有误。</p>
+        <ul>
+            <li><a href={`${basePath}/zh-cn/`}>返回文档首页</a></li>
+            <li><a href={`${basePath}/zh-cn/guide/user-guide/`}>打开使用指南</a></li>
+            <li><a href="https://github.com/Mai-xiyu">访问 Mai_xiyu 的 GitHub</a></li>
+        </ul>
+    </main>
+</body>
+</html>
