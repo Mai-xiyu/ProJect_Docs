@@ -2,11 +2,14 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-const site = process.env.SITE;
+const site = process.env.SITE ?? 'https://docs.mai-xiyu.top';
+const base =
+  process.env.BASE ??
+  (new URL(site).hostname.endsWith('github.io') ? '/ProJect_Docs' : undefined);
 
 export default defineConfig({
-  ...(site ? { site } : {}),
-  base: '/ProJect_Docs',
+  site,
+  ...(base ? { base } : {}),
   integrations: [
     starlight({
       title: 'Mai_xiyu Projects',
