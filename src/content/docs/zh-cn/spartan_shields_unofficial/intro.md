@@ -49,4 +49,4 @@ description: 斯巴达盾牌非官方版模组介绍
 
 ## 🔧 开发者
 
-如果您是附属模组开发者，请查看 [API 参考文档](/ProJect_Docs/zh-cn/spartan_shields_unofficial/api-reference/) 了解如何使用 Spartan Shields API 来创建自定义盾牌和资源类型。
+如果您是附属模组开发者，请查看 [API 参考文档](../api-reference/) 了解如何使用 Spartan Shields API 来创建自定义盾牌和资源类型。

@@ -49,4 +49,4 @@ This is an unofficial port aimed at providing support for newer Minecraft versio
 
 ## 🔧 For Developers
 
-If you are an addon mod developer, check the [API Reference](/ProJect_Docs/en/spartan_shields_unofficial/api-reference/) to learn how to use the Spartan Shields API to create custom shields and resource types.
+If you are an addon mod developer, check the [API Reference](../api-reference/) to learn how to use the Spartan Shields API to create custom shields and resource types.
