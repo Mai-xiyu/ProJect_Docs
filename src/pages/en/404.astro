@@ -1,0 +1,24 @@
+---
+layout: false
+
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found | Mai_xiyu Projects</title>
+</head>
+<body>
+    <main>
+        <h1>Page Not Found</h1>
+        <p>The page you are looking for does not exist, has moved, or the link is incorrect.</p>
+        <ul>
+            <li><a href={`${basePath}/en/`}>Go back to the documentation home</a></li>
+            <li><a href={`${basePath}/en/guide/user-guide/`}>Open the User Guide</a></li>
+            <li><a href="https://github.com/Mai-xiyu">Visit Mai_xiyu on GitHub</a></li>
+        </ul>
+    </main>
+</body>
+</html>

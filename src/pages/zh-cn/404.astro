@@ -1,0 +1,24 @@
+---
+layout: false
+
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面未找到 | Mai_xiyu Projects</title>
+</head>
+<body>
+    <main>
+        <h1>页面未找到</h1>
+        <p>你访问的页面不存在、已被移动，或者链接填写有误。</p>
+        <ul>
+            <li><a href={`${basePath}/zh-cn/`}>返回文档首页</a></li>
+            <li><a href={`${basePath}/zh-cn/guide/user-guide/`}>打开使用指南</a></li>
+            <li><a href="https://github.com/Mai-xiyu">访问 Mai_xiyu 的 GitHub</a></li>
+        </ul>
+    </main>
+</body>
+</html>
