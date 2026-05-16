@@ -44,24 +44,46 @@ You can use predefined materials or create custom ones.
 ```java
 import org.xiyu.spartanweaponryunofficial.api.WeaponMaterial;
 
-// Predefined materials: WOOL, STONE, IRON, GOLD, DIAMOND, NETHERITE, etc.
+// Predefined materials: WOOD, STONE, IRON, GOLD, DIAMOND, NETHERITE, etc.
 WeaponMaterial material = WeaponMaterial.IRON;
 ```
 
 #### Creating Custom Materials
 ```java
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import org.xiyu.spartanweaponryunofficial.api.WeaponMaterial;
 import org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI;
+import org.xiyu.spartanweaponryunofficial.api.tags.ModWeaponTraitTags;
+import org.xiyu.spartanweaponryunofficial.api.trait.WeaponTrait;
 import net.minecraft.world.item.Tiers;
 
-// Create using Vanilla Tier
+public static final TagKey<Item> MY_INGOT = ItemTags.create(
+    ResourceLocation.fromNamespaceAndPath("mydepmod", "ingots/my_material")
+);
+
+public static final TagKey<WeaponTrait> MY_MATERIAL_TRAITS = ModWeaponTraitTags.create(
+    "mydepmod",
+    "materials/my_material"
+);
+
+// Create using a vanilla Tier
 WeaponMaterial myMaterial = new WeaponMaterial(
-    "my_material",          // Material name (used for registry name, e.g., dagger_my_material)
+    "my_material",          // Material name, used by material translation and custom display names
     "mydepmod",             // Your mod ID
     Tiers.DIAMOND,          // Base Tier properties
-    ModItemTags.MY_INGOT,   // Repair item Tag
-    ModWeaponTraitTags.MY_TRAIT // Trait Tag (Optional)
+    MY_INGOT,               // Repair item Tag
+    MY_MATERIAL_TRAITS      // Material trait Tag
 );
+
+// Equivalent builder form, useful when numeric constructor arguments would be hard to audit
+WeaponMaterial myBuiltMaterial = WeaponMaterial.builder("my_material", "mydepmod")
+    .tier(Tiers.DIAMOND)
+    .repairTag(MY_INGOT)
+    .traitsTag(MY_MATERIAL_TRAITS)
+    .build();
 ```
 
 ### 2. Register Weapons
@@ -70,9 +92,11 @@ It is recommended to use NeoForge/Forge's `DeferredRegister` to register items.
 
 ```java
 import net.minecraft.world.item.Item;
+import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI;
+import org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI.WeaponItemType;
 
 public class MyModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "mymodid");
@@ -86,6 +110,11 @@ public class MyModItems {
     public static final DeferredHolder<Item, Item> MY_WARHAMMER = ITEMS.register("warhammer_my_material", () -> 
         SpartanWeaponryAPI.createWarhammer(MyModMaterials.MY_MATERIAL)
     );
+
+    // Equivalent generic entry point, useful when code selects weapon types dynamically
+    public static final DeferredHolder<Item, Item> MY_GLAIVE = ITEMS.register("glaive_my_material", () ->
+        SpartanWeaponryAPI.createWeapon(WeaponItemType.GLAIVE, MyModMaterials.MY_MATERIAL)
+    );
 }
 ```
 
@@ -95,116 +124,136 @@ To ensure compatibility, it is recommended to check the API version in your mod 
 
 ```java
 public MyMod() {
-    // Ensure API version is at least 12
-    SpartanWeaponryAPI.assertAPIVersion("mymodid", 12);
+    // Ensure API version is at least 13
+    SpartanWeaponryAPI.assertAPIVersion("mymodid", 13);
 }
 ```
+
+Use version `13` when relying on `createWeapon(...)`, `WeaponItemType`, or `WeaponMaterial.builder(...)`. Existing addons that only use the older `createXxx(WeaponMaterial)` methods remain compatible with their previous version check.
 
 ---
 
 ## 🛠️ Weapon Creation Methods
 
-All methods are located in the `SpartanWeaponryAPI` class and require a `WeaponMaterial` parameter.
+All methods are located in the `SpartanWeaponryAPI` class and return an unregistered `Item`. The caller chooses the registry id in its own `DeferredRegister`.
 
-| Method Name | Description | Registry Name Format | Localization Key Format |
+API version 13 adds the generic entry point:
+
+```java
+Item item = SpartanWeaponryAPI.createWeapon(
+    SpartanWeaponryAPI.WeaponItemType.LONGSWORD,
+    MyModMaterials.MY_MATERIAL
+);
+```
+
+All existing `createXxx(WeaponMaterial)` methods remain compatible and delegate to the same internal factories.
+
+| Legacy Method | Generic Descriptor | Trait Category | Custom Display Key |
 | :--- | :--- | :--- | :--- |
-| `createDagger` | Dagger | `{material}_dagger` | `item.spartan_weaponry_unofficial.{material}_dagger` |
-| `createParryingDagger` | Parrying Dagger | `{material}_parrying_dagger` | `item.spartan_weaponry_unofficial.{material}_parrying_dagger` |
-| `createLongsword` | Longsword | `{material}_longsword` | `item.spartan_weaponry_unofficial.{material}_longsword` |
-| `createKatana` | Katana | `{material}_katana` | `item.spartan_weaponry_unofficial.{material}_katana` |
-| `createSaber` | Saber | `{material}_saber` | `item.spartan_weaponry_unofficial.{material}_saber` |
-| `createRapier` | Rapier | `{material}_rapier` | `item.spartan_weaponry_unofficial.{material}_rapier` |
-| `createGreatsword` | Greatsword | `{material}_greatsword` | `item.spartan_weaponry_unofficial.{material}_greatsword` |
-| `createBattleHammer` | Battle Hammer | `{material}_battle_hammer` | `item.spartan_weaponry_unofficial.{material}_battle_hammer` |
-| `createWarhammer` | Warhammer | `{material}_warhammer` | `item.spartan_weaponry_unofficial.{material}_warhammer` |
-| `createSpear` | Spear | `{material}_spear` | `item.spartan_weaponry_unofficial.{material}_spear` |
-| `createHalberd` | Halberd | `{material}_halberd` | `item.spartan_weaponry_unofficial.{material}_halberd` |
-| `createPike` | Pike | `{material}_pike` | `item.spartan_weaponry_unofficial.{material}_pike` |
-| `createLance` | Lance | `{material}_lance` | `item.spartan_weaponry_unofficial.{material}_lance` |
-| `createLongbow` | Strengthened Longbow | `longbow_{material}_strengthened` | `item.spartan_weaponry_unofficial.longbow_{material}_strengthened` |
-| `createHeavyCrossbow` | Strengthened Heavy Crossbow | `heavy_crossbow_{material}_strengthened` | `item.spartan_weaponry_unofficial.heavy_crossbow_{material}_strengthened` |
-| `createThrowingKnife` | Throwing Knife | `{material}_throwing_knife` | `item.spartan_weaponry_unofficial.{material}_throwing_knife` |
-| `createTomahawk` | Tomahawk | `{material}_tomahawk` | `item.spartan_weaponry_unofficial.{material}_tomahawk` |
-| `createJavelin` | Javelin | `{material}_javelin` | `item.spartan_weaponry_unofficial.{material}_javelin` |
-| `createBoomerang` | Boomerang | `{material}_boomerang` | `item.spartan_weaponry_unofficial.{material}_boomerang` |
-| `createMace` | Mace | `{material}_mace` | `item.spartan_weaponry_unofficial.{material}_mace` |
-| `createQuarterstaff` | Quarterstaff | `{material}_quarterstaff` | `item.spartan_weaponry_unofficial.{material}_quarterstaff` |
-| `createGlaive` | Glaive | `{material}_glaive` | `item.spartan_weaponry_unofficial.{material}_glaive` |
+| `createDagger` | `WeaponItemType.DAGGER` | `MELEE` | `item.spartan_weaponry_unofficial.custom_dagger` |
+| `createParryingDagger` | `WeaponItemType.PARRYING_DAGGER` | `MELEE` | `item.spartan_weaponry_unofficial.custom_parrying_dagger` |
+| `createLongsword` | `WeaponItemType.LONGSWORD` | `MELEE` | `item.spartan_weaponry_unofficial.custom_longsword` |
+| `createKatana` | `WeaponItemType.KATANA` | `MELEE` | `item.spartan_weaponry_unofficial.custom_katana` |
+| `createSaber` | `WeaponItemType.SABER` | `MELEE` | `item.spartan_weaponry_unofficial.custom_saber` |
+| `createRapier` | `WeaponItemType.RAPIER` | `MELEE` | `item.spartan_weaponry_unofficial.custom_rapier` |
+| `createGreatsword` | `WeaponItemType.GREATSWORD` | `MELEE` | `item.spartan_weaponry_unofficial.custom_greatsword` |
+| `createBattleHammer` | `WeaponItemType.BATTLE_HAMMER` | `MELEE` | `item.spartan_weaponry_unofficial.custom_hammer` |
+| `createWarhammer` | `WeaponItemType.WARHAMMER` | `MELEE` | `item.spartan_weaponry_unofficial.custom_warhammer` |
+| `createSpear` | `WeaponItemType.SPEAR` | `MELEE` | `item.spartan_weaponry_unofficial.custom_spear` |
+| `createHalberd` | `WeaponItemType.HALBERD` | `MELEE` | `item.spartan_weaponry_unofficial.custom_halberd` |
+| `createPike` | `WeaponItemType.PIKE` | `MELEE` | `item.spartan_weaponry_unofficial.custom_pike` |
+| `createLance` | `WeaponItemType.LANCE` | `MELEE` | `item.spartan_weaponry_unofficial.custom_lance` |
+| `createLongbow` | `WeaponItemType.LONGBOW` | `RANGED` | `item.spartan_weaponry_unofficial.custom_longbow` |
+| `createHeavyCrossbow` | `WeaponItemType.HEAVY_CROSSBOW` | `RANGED` | `item.spartan_weaponry_unofficial.custom_heavy_crossbow` |
+| `createThrowingKnife` | `WeaponItemType.THROWING_KNIFE` | `THROWING` | `item.spartan_weaponry_unofficial.custom_throwing_knife` |
+| `createTomahawk` | `WeaponItemType.TOMAHAWK` | `THROWING` | `item.spartan_weaponry_unofficial.custom_tomahawk` |
+| `createJavelin` | `WeaponItemType.JAVELIN` | `THROWING` | `item.spartan_weaponry_unofficial.custom_javelin` |
+| `createBoomerang` | `WeaponItemType.BOOMERANG` | `THROWING` | `item.spartan_weaponry_unofficial.custom_boomerang` |
+| `createBattleaxe` | `WeaponItemType.BATTLEAXE` | `MELEE` | `item.spartan_weaponry_unofficial.custom_battleaxe` |
+| `createFlangedMace` | `WeaponItemType.FLANGED_MACE` | `MELEE` | `item.spartan_weaponry_unofficial.custom_flanged_mace` |
+| `createGlaive` | `WeaponItemType.GLAIVE` | `MELEE` | `item.spartan_weaponry_unofficial.custom_glaive` |
+| `createQuarterstaff` | `WeaponItemType.QUARTERSTAFF` | `MELEE` | `item.spartan_weaponry_unofficial.custom_quarterstaff` |
+| `createScythe` | `WeaponItemType.SCYTHE` | `MELEE` | `item.spartan_weaponry_unofficial.custom_scythe` |
+
+The custom display keys above are used only when the material has `setUseCustomDisplayName()` enabled. Otherwise Minecraft uses the normal item translation key derived from the registry id chosen by your addon.
 
 ---
 
 ## 📝 Naming Convention Details
 
-### Melee and Throwing Weapons
+The API factory methods do not assign registry ids. The id is the string passed to your `DeferredRegister`.
 
-Melee and throwing weapons use the `{material}_{weapon}` format:
+Recommended addon ids should be stable and lowercase. The examples below use `<weapon>_<material>` for melee and throwing weapons:
 
 ```java
-// Melee weapon registration example
-public static final DeferredHolder<Item, Item> IRON_LONGSWORD = ITEMS.register(
-    "iron_longsword",  // {material}_{weapon} format
-    () -> SpartanWeaponryAPI.createLongsword(MyModMaterials.IRON)
+public static final DeferredHolder<Item, Item> MY_LONGSWORD = ITEMS.register(
+    "longsword_my_material",
+    () -> SpartanWeaponryAPI.createLongsword(MyModMaterials.MY_MATERIAL)
 );
 
-// Throwing weapon registration example
-public static final DeferredHolder<Item, Item> DIAMOND_THROWING_KNIFE = ITEMS.register(
-    "diamond_throwing_knife",  // {material}_{weapon} format
-    () -> SpartanWeaponryAPI.createThrowingKnife(MyModMaterials.DIAMOND)
+public static final DeferredHolder<Item, Item> MY_THROWING_KNIFE = ITEMS.register(
+    "throwing_knife_my_material",
+    () -> SpartanWeaponryAPI.createThrowingKnife(MyModMaterials.MY_MATERIAL)
 );
 
-// Localization key format
-// "item.spartan_weaponry_unofficial.iron_longsword": "Iron Longsword"
-// "item.spartan_weaponry_unofficial.diamond_throwing_knife": "Diamond Throwing Knife"
+// Normal localization key format is based on your addon registry namespace and id:
+// "item.mymodid.longsword_my_material": "My Material Longsword"
+// "item.mymodid.throwing_knife_my_material": "My Material Throwing Knife"
+```
+
+If a material enables `setUseCustomDisplayName()`, the created item uses the built-in custom display key listed in the table above and passes the material display name as the `%s` argument. The default material display key is:
+
+```json
+{
+  "material.mydepmod.my_material": "My Material",
+  "item.spartan_weaponry_unofficial.custom_longsword": "%s Longsword"
+}
 ```
 
 ### Strengthened Weapons
 
-Starting from version 1.0.3, **longbows and heavy crossbows** created via the extension API use a special format `{weapontype}_{material}_strengthened`:
+For addon longbows and heavy crossbows, using the built-in strengthened naming pattern keeps resource-pack paths predictable:
 
 ```java
-// Longbow registration example
-public static final DeferredHolder<Item, Item> DIAMOND_LONGBOW = ITEMS.register(
-    "longbow_diamond_strengthened",  // Note format: longbow_{material}_strengthened
-    () -> SpartanWeaponryAPI.createLongbow(WeaponMaterial.DIAMOND)
+public static final DeferredHolder<Item, Item> MY_LONGBOW = ITEMS.register(
+    "longbow_my_material_strengthened",
+    () -> SpartanWeaponryAPI.createLongbow(MyModMaterials.MY_MATERIAL)
 );
 
-// Heavy crossbow registration example  
-public static final DeferredHolder<Item, Item> IRON_HEAVY_CROSSBOW = ITEMS.register(
-    "heavy_crossbow_iron_strengthened",  // Format: heavy_crossbow_{material}_strengthened
-    () -> SpartanWeaponryAPI.createHeavyCrossbow(WeaponMaterial.IRON)
+public static final DeferredHolder<Item, Item> MY_HEAVY_CROSSBOW = ITEMS.register(
+    "heavy_crossbow_my_material_strengthened",
+    () -> SpartanWeaponryAPI.createHeavyCrossbow(MyModMaterials.MY_MATERIAL)
 );
-
-// Localization key format
-// "item.spartan_weaponry_unofficial.longbow_diamond_strengthened": "Diamond-Strengthened Longbow"
-// "item.spartan_weaponry_unofficial.heavy_crossbow_iron_strengthened": "Iron-Strengthened Heavy Crossbow"
 ```
 
-**Texture file naming**: Strengthened weapon texture files **do not include** the `_strengthened` suffix:
-- Registry name: `longbow_diamond_strengthened`
-- Texture path: `textures/item/diamond_longbow_standby.png` (no strengthened)
-- Texture path: `textures/item/iron_heavy_crossbow_standby.png` (no strengthened)
+Texture file naming for strengthened weapons does not include the `_strengthened` suffix:
+- Registry id example: `longbow_my_material_strengthened`
+- Texture path: `textures/item/my_material_longbow_standby.png`
+- Texture path: `textures/item/my_material_heavy_crossbow_standby.png`
 
 ---
 
 ## ✨ Weapon Traits
 
-Traits are usually automatically assigned via Tags, but you can also specify them when defining `WeaponMaterial`. Common traits include:
+Traits are loaded through tags on the `spartan_weaponry_unofficial:weapon_traits` registry. Common built-in holders include:
 
-- `WeaponTraits.REACH`: Increases attack range (`reach`)
-- `WeaponTraits.SWEEP_DAMAGE`: Increases sweep damage (`sweep_damage`)
-- `WeaponTraits.TWO_HANDED`: Two-handed weapon, offhand restricted (`two_handed`)
-- `WeaponTraits.ARMOUR_PIERCING`: Pierces a percentage of armor (`armour_piercing`)
-- `WeaponTraits.THROWN`: Throwable (`thrown`)
+- `WeaponTraits.REACH_1`, `WeaponTraits.REACH_1_5`, `WeaponTraits.REACH_2`, `WeaponTraits.REACH_2_5`: increases attack range (`reach`)
+- `WeaponTraits.SWEEP_1`, `WeaponTraits.SWEEP_2`, `WeaponTraits.SWEEP_3`: increases sweep damage (`sweep_damage`)
+- `WeaponTraits.ARMOR_PIERCING`: pierces a percentage of armor (`armor_piercing`)
+- `WeaponTraits.THROWABLE`: makes a melee weapon throwable (`throwable`)
+- `WeaponTraits.HAMMER_SLAM`: hammer slam action trait (`hammer_slam`)
 
 ### Adding Traits via Tags (Recommended)
 
-Create a JSON file under `data/spartan_weaponry_unofficial/tags/weapon_traits/`:
+Create a JSON file under `data/<namespace>/tags/spartan_weaponry_unofficial/weapon_traits/`. Material trait tags usually live under `materials/`:
 
 ```json
+// data/mydepmod/tags/spartan_weaponry_unofficial/weapon_traits/materials/my_material.json
 {
   "replace": false,
   "values": [
-    "mymodid:longsword_my_material"
+    "spartan_weaponry_unofficial:reach_1",
+    "spartan_weaponry_unofficial:fireproof"
   ]
 }
 ```

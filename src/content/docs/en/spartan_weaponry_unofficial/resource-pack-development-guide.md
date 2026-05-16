@@ -479,15 +479,17 @@ The mod supports the following languages:
 
 ```json
 {
-  // Item names
-  "item.spartan_weaponry_unofficial.{material}_{weapon_type}": "Weapon Name",
+  // Built-in item names use the registered item id
+  "item.spartan_weaponry_unofficial.iron_longsword": "Iron Longsword",
+  "item.spartan_weaponry_unofficial.dagger_wooden": "Wooden Dagger",
   
   // Strengthened weapons
-  "item.spartan_weaponry_unofficial.longbow_{material}_strengthened": "Material-Strengthened Longbow",
-  "item.spartan_weaponry_unofficial.heavy_crossbow_{material}_strengthened": "Material-Strengthened Heavy Crossbow",
+  "item.spartan_weaponry_unofficial.longbow_iron_strengthened": "Iron-Strengthened Longbow",
+  "item.spartan_weaponry_unofficial.heavy_crossbow_iron_strengthened": "Iron-Strengthened Heavy Crossbow",
   
-  // Custom material items (using %s placeholder)
-  "item.spartan_weaponry_unofficial.custom_{weapon_type}": "%s Weapon Name",
+  // API-created custom material items use this only when the material enables setUseCustomDisplayName()
+  "material.mydepmod.my_material": "My Material",
+  "item.spartan_weaponry_unofficial.custom_longsword": "%s Longsword",
   
   // Sound subtitles
   "subtitle.spartan_weaponry_unofficial.{sound_event}": "Subtitle Text",
@@ -601,4 +603,4 @@ Projectile entity textures (arrows, bolts) are located in `textures/entity/proje
 
 ---
 
-*Document Version: 1.0.2 | Updated 2026-02-07 | For Spartan Weaponry Unofficial for NeoForge 1.21.1*
+*Document Version: 1.0.3 | Updated 2026-05-16 | For Spartan Weaponry Unofficial for NeoForge 1.21.1*
