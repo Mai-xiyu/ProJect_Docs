@@ -603,4 +603,50 @@ Projectile entity textures (arrows, bolts) are located in `textures/entity/proje
 
 ---
 
-*Document Version: 1.0.3 | Updated 2026-05-16 | For Spartan Weaponry Unofficial for NeoForge 1.21.1*
+## Datapack Item Tags
+
+Spartan Weaponry generates standard item tags for built-in weapons. Addons and modpacks can extend the same tags with datapacks or KubeJS.
+
+Canonical grouped tags:
+
+```text
+#spartan_weaponry_unofficial:weapons
+#spartan_weaponry_unofficial:weapons/longswords
+#spartan_weaponry_unofficial:weapons/spears
+#spartan_weaponry_unofficial:weapons/heavy_crossbows
+#spartan_weaponry_unofficial:materials/steel
+#spartan_weaponry_unofficial:materials/diamond
+#spartan_weaponry_unofficial:mods/spartan_weaponry_unofficial
+#spartan_weaponry_unofficial:mods/<addon_mod_id>
+```
+
+Legacy flat tags such as `#spartan_weaponry_unofficial:longsword`, `#spartan_weaponry_unofficial:spear`, and `#spartan_weaponry_unofficial:steel_weapons` are still present. New grouped tags reference the legacy tags for built-in weapons.
+
+Datapack example:
+
+```json
+// data/spartan_weaponry_unofficial/tags/item/materials/steel.json
+{
+  "replace": false,
+  "values": [
+    "mymodid:steel_longsword",
+    "mymodid:steel_spear"
+  ]
+}
+```
+
+KubeJS example:
+
+```js
+ServerEvents.tags("item", event => {
+  event.add("spartan_weaponry_unofficial:materials/steel", "mymodid:steel_longsword");
+  event.add("spartan_weaponry_unofficial:weapons/longswords", "mymodid:steel_longsword");
+  event.add("spartan_weaponry_unofficial:mods/mymodid", "mymodid:steel_longsword");
+});
+```
+
+Weapon Oil is available only when `enable_weapon_oil=true` in the common config. The default value is `false`, so oil recipes, creative tab oil variants, application, combat effects, and oil HUD/tooltips are disabled unless a pack opts in. `disable_oil_recipes` only applies after `enable_weapon_oil` is enabled.
+
+---
+
+*Document Version: 1.0.3 | Updated 2026-06-02 | For Spartan Weaponry Unofficial for NeoForge 1.21.1*

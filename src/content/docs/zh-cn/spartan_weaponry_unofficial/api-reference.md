@@ -50,18 +50,39 @@ WeaponMaterial material = WeaponMaterial.IRON;
 
 #### 创建自定义材质
 ```java
-import org.xiyu.spartanweaponryunofficial.api.WeaponMaterial;
-import org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Tiers;
+import org.xiyu.spartanweaponryunofficial.api.WeaponMaterial;
+import org.xiyu.spartanweaponryunofficial.api.tags.ModWeaponTraitTags;
+import org.xiyu.spartanweaponryunofficial.api.trait.WeaponTrait;
 
-// 使用 Vanilla Tier 创建
+public static final TagKey<Item> MY_INGOT = ItemTags.create(
+    ResourceLocation.fromNamespaceAndPath("mydepmod", "ingots/my_material")
+);
+
+public static final TagKey<WeaponTrait> MY_MATERIAL_TRAITS = ModWeaponTraitTags.create(
+    "mydepmod",
+    "materials/my_material"
+);
+
+// 使用 Vanilla Tier 创建。
 WeaponMaterial myMaterial = new WeaponMaterial(
-    "my_material",          // 材质名称 (用于注册名，如 dagger_my_material)
+    "my_material",          // 材质名称，用于材质翻译和自定义显示名
     "mydepmod",             // 您的模组 ID
     Tiers.DIAMOND,          // 基础 Tier 属性
-    ModItemTags.MY_INGOT,   // 修复物品 Tag
-    ModWeaponTraitTags.MY_TRAIT // 特性 Tag (可选)
+    MY_INGOT,               // 修复物品 Tag
+    MY_MATERIAL_TRAITS      // 材质特性 Tag
 );
+
+// 等价 builder 写法，适合避免长参数构造函数误用。
+WeaponMaterial builtMaterial = WeaponMaterial.builder("my_material", "mydepmod")
+    .tier(Tiers.DIAMOND)
+    .repairTag(MY_INGOT)
+    .traitsTag(MY_MATERIAL_TRAITS)
+    .build();
 ```
 
 ### 2. 注册武器
@@ -70,9 +91,11 @@ WeaponMaterial myMaterial = new WeaponMaterial(
 
 ```java
 import net.minecraft.world.item.Item;
+import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI;
+import org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI.WeaponItemType;
 
 public class MyModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "mymodid");
@@ -86,6 +109,11 @@ public class MyModItems {
     public static final DeferredHolder<Item, Item> MY_WARHAMMER = ITEMS.register("warhammer_my_material", () -> 
         SpartanWeaponryAPI.createWarhammer(MyModMaterials.MY_MATERIAL)
     );
+
+    // 通用入口，适合根据配置或描述符动态选择武器类型。
+    public static final DeferredHolder<Item, Item> MY_GLAIVE = ITEMS.register("glaive_my_material", () ->
+        SpartanWeaponryAPI.createWeapon(WeaponItemType.GLAIVE, MyModMaterials.MY_MATERIAL)
+    );
 }
 ```
 
@@ -95,116 +123,197 @@ public class MyModItems {
 
 ```java
 public MyMod() {
-    // 确保 API 版本至少为 12
-    SpartanWeaponryAPI.assertAPIVersion("mymodid", 12);
+    // 需要分类元数据、分组 tag helper、createWeapon(...) 或 WeaponMaterial.builder(...) 时使用 14。
+    SpartanWeaponryAPI.assertAPIVersion("mymodid", 14);
 }
 ```
 
+如果附属模组只使用旧的 `createXxx(WeaponMaterial)` 方法，可以继续请求旧版本；只有使用新 API 时才需要提高到对应版本。API 14 会为所有通过 API 创建的武器记录分类元数据。
+
 ---
 
-## 🛠️ 武器创建方法表
+## 🛠️ 武器创建方法
 
-所有方法均位于 `SpartanWeaponryAPI` 类中，且需要一个 `WeaponMaterial` 参数。
+所有方法均位于 `SpartanWeaponryAPI`，返回值是**尚未注册的** `Item`。调用方仍然需要在自己的 `DeferredRegister` 中决定 registry id。
 
-| 方法名 | 描述 | 注册名格式 | 本地化键格式 |
+API 13 增加了通用入口：
+
+```java
+Item item = SpartanWeaponryAPI.createWeapon(
+    SpartanWeaponryAPI.WeaponItemType.LONGSWORD,
+    MyModMaterials.MY_MATERIAL
+);
+```
+
+所有旧的 `createXxx(WeaponMaterial)` 方法仍然保留，并委派到同一套内部工厂。API 14 会自动为这些 API 创建的武器记录分类元数据。
+
+| 旧方法 | 通用描述符 | Trait 类别 | 自定义显示 key |
 | :--- | :--- | :--- | :--- |
-| `createDagger` | 匕首 | `{material}_dagger` | `item.spartan_weaponry_unofficial.{material}_dagger` |
-| `createParryingDagger` | 招架匕首 | `{material}_parrying_dagger` | `item.spartan_weaponry_unofficial.{material}_parrying_dagger` |
-| `createLongsword` | 长剑 | `{material}_longsword` | `item.spartan_weaponry_unofficial.{material}_longsword` |
-| `createKatana` | 太刀 | `{material}_katana` | `item.spartan_weaponry_unofficial.{material}_katana` |
-| `createSaber` | 军刀 | `{material}_saber` | `item.spartan_weaponry_unofficial.{material}_saber` |
-| `createRapier` | 西洋剑 | `{material}_rapier` | `item.spartan_weaponry_unofficial.{material}_rapier` |
-| `createGreatsword` | 巨剑 | `{material}_greatsword` | `item.spartan_weaponry_unofficial.{material}_greatsword` |
-| `createBattleHammer` | 战锤 | `{material}_battle_hammer` | `item.spartan_weaponry_unofficial.{material}_battle_hammer` |
-| `createWarhammer` | 大锤 | `{material}_warhammer` | `item.spartan_weaponry_unofficial.{material}_warhammer` |
-| `createSpear` | 矛 | `{material}_spear` | `item.spartan_weaponry_unofficial.{material}_spear` |
-| `createHalberd` | 戟 | `{material}_halberd` | `item.spartan_weaponry_unofficial.{material}_halberd` |
-| `createPike` | 长矛 | `{material}_pike` | `item.spartan_weaponry_unofficial.{material}_pike` |
-| `createLance` | 骑枪 | `{material}_lance` | `item.spartan_weaponry_unofficial.{material}_lance` |
-| `createLongbow` | 强化长弓 | `longbow_{material}_strengthened` | `item.spartan_weaponry_unofficial.longbow_{material}_strengthened` |
-| `createHeavyCrossbow` | 强化重型弩 | `heavy_crossbow_{material}_strengthened` | `item.spartan_weaponry_unofficial.heavy_crossbow_{material}_strengthened` |
-| `createThrowingKnife` | 飞刀 | `{material}_throwing_knife` | `item.spartan_weaponry_unofficial.{material}_throwing_knife` |
-| `createTomahawk` | 飞斧 | `{material}_tomahawk` | `item.spartan_weaponry_unofficial.{material}_tomahawk` |
-| `createJavelin` | 标枪 | `{material}_javelin` | `item.spartan_weaponry_unofficial.{material}_javelin` |
-| `createBoomerang` | 回旋镖 | `{material}_boomerang` | `item.spartan_weaponry_unofficial.{material}_boomerang` |
-| `createMace` | 钉头锤 | `{material}_mace` | `item.spartan_weaponry_unofficial.{material}_mace` |
-| `createQuarterstaff` | 铁头棒 | `{material}_quarterstaff` | `item.spartan_weaponry_unofficial.{material}_quarterstaff` |
-| `createGlaive` | 关刀 | `{material}_glaive` | `item.spartan_weaponry_unofficial.{material}_glaive` |
+| `createDagger` | `WeaponItemType.DAGGER` | `MELEE` | `item.spartan_weaponry_unofficial.custom_dagger` |
+| `createParryingDagger` | `WeaponItemType.PARRYING_DAGGER` | `MELEE` | `item.spartan_weaponry_unofficial.custom_parrying_dagger` |
+| `createLongsword` | `WeaponItemType.LONGSWORD` | `MELEE` | `item.spartan_weaponry_unofficial.custom_longsword` |
+| `createKatana` | `WeaponItemType.KATANA` | `MELEE` | `item.spartan_weaponry_unofficial.custom_katana` |
+| `createSaber` | `WeaponItemType.SABER` | `MELEE` | `item.spartan_weaponry_unofficial.custom_saber` |
+| `createRapier` | `WeaponItemType.RAPIER` | `MELEE` | `item.spartan_weaponry_unofficial.custom_rapier` |
+| `createGreatsword` | `WeaponItemType.GREATSWORD` | `MELEE` | `item.spartan_weaponry_unofficial.custom_greatsword` |
+| `createBattleHammer` | `WeaponItemType.BATTLE_HAMMER` | `MELEE` | `item.spartan_weaponry_unofficial.custom_hammer` |
+| `createWarhammer` | `WeaponItemType.WARHAMMER` | `MELEE` | `item.spartan_weaponry_unofficial.custom_warhammer` |
+| `createSpear` | `WeaponItemType.SPEAR` | `MELEE` | `item.spartan_weaponry_unofficial.custom_spear` |
+| `createHalberd` | `WeaponItemType.HALBERD` | `MELEE` | `item.spartan_weaponry_unofficial.custom_halberd` |
+| `createPike` | `WeaponItemType.PIKE` | `MELEE` | `item.spartan_weaponry_unofficial.custom_pike` |
+| `createLance` | `WeaponItemType.LANCE` | `MELEE` | `item.spartan_weaponry_unofficial.custom_lance` |
+| `createLongbow` | `WeaponItemType.LONGBOW` | `RANGED` | `item.spartan_weaponry_unofficial.custom_longbow` |
+| `createHeavyCrossbow` | `WeaponItemType.HEAVY_CROSSBOW` | `RANGED` | `item.spartan_weaponry_unofficial.custom_heavy_crossbow` |
+| `createThrowingKnife` | `WeaponItemType.THROWING_KNIFE` | `THROWING` | `item.spartan_weaponry_unofficial.custom_throwing_knife` |
+| `createTomahawk` | `WeaponItemType.TOMAHAWK` | `THROWING` | `item.spartan_weaponry_unofficial.custom_tomahawk` |
+| `createJavelin` | `WeaponItemType.JAVELIN` | `THROWING` | `item.spartan_weaponry_unofficial.custom_javelin` |
+| `createBoomerang` | `WeaponItemType.BOOMERANG` | `THROWING` | `item.spartan_weaponry_unofficial.custom_boomerang` |
+| `createBattleaxe` | `WeaponItemType.BATTLEAXE` | `MELEE` | `item.spartan_weaponry_unofficial.custom_battleaxe` |
+| `createFlangedMace` | `WeaponItemType.FLANGED_MACE` | `MELEE` | `item.spartan_weaponry_unofficial.custom_flanged_mace` |
+| `createGlaive` | `WeaponItemType.GLAIVE` | `MELEE` | `item.spartan_weaponry_unofficial.custom_glaive` |
+| `createQuarterstaff` | `WeaponItemType.QUARTERSTAFF` | `MELEE` | `item.spartan_weaponry_unofficial.custom_quarterstaff` |
+| `createScythe` | `WeaponItemType.SCYTHE` | `MELEE` | `item.spartan_weaponry_unofficial.custom_scythe` |
+
+上表中的自定义显示 key 只在材质启用 `setUseCustomDisplayName()` 时使用。否则物品名称仍由调用方注册 id 生成的普通翻译 key 决定。
 
 ---
 
 ## 📝 命名规则说明
 
-### 近战武器和投掷武器
+API 工厂方法不会分配 registry id；id 就是您传给 `DeferredRegister` 的字符串。
 
-近战武器和投掷武器使用 `{material}_{weapon}` 格式：
-
-```java
-// 近战武器注册示例
-public static final DeferredHolder<Item, Item> IRON_LONGSWORD = ITEMS.register(
-    "iron_longsword",  // {material}_{weapon} 格式
-    () -> SpartanWeaponryAPI.createLongsword(MyModMaterials.IRON)
-);
-
-// 投掷武器注册示例
-public static final DeferredHolder<Item, Item> DIAMOND_THROWING_KNIFE = ITEMS.register(
-    "diamond_throwing_knife",  // {material}_{weapon} 格式
-    () -> SpartanWeaponryAPI.createThrowingKnife(MyModMaterials.DIAMOND)
-);
-
-// 本地化键格式
-// "item.spartan_weaponry_unofficial.iron_longsword": "Iron Longsword"
-// "item.spartan_weaponry_unofficial.diamond_throwing_knife": "Diamond Throwing Knife"
-```
-
-### 强化武器 (Strengthened Weapons)
-
-从 1.0.3 版本开始，通过附加 API 创建的**长弓和重型十字弓**使用特殊格式 `{weapontype}_{material}_strengthened`：
+推荐附属模组使用稳定、小写的 id。下面示例使用 `<weapon>_<material>`：
 
 ```java
-// 长弓注册示例
-public static final DeferredHolder<Item, Item> DIAMOND_LONGBOW = ITEMS.register(
-    "longbow_diamond_strengthened",  // 注意格式: longbow_{material}_strengthened
-    () -> SpartanWeaponryAPI.createLongbow(WeaponMaterial.DIAMOND)
+public static final DeferredHolder<Item, Item> MY_LONGSWORD = ITEMS.register(
+    "longsword_my_material",
+    () -> SpartanWeaponryAPI.createLongsword(MyModMaterials.MY_MATERIAL)
 );
 
-// 重型十字弓注册示例  
-public static final DeferredHolder<Item, Item> IRON_HEAVY_CROSSBOW = ITEMS.register(
-    "heavy_crossbow_iron_strengthened",  // 格式: heavy_crossbow_{material}_strengthened
-    () -> SpartanWeaponryAPI.createHeavyCrossbow(WeaponMaterial.IRON)
+public static final DeferredHolder<Item, Item> MY_THROWING_KNIFE = ITEMS.register(
+    "throwing_knife_my_material",
+    () -> SpartanWeaponryAPI.createThrowingKnife(MyModMaterials.MY_MATERIAL)
 );
 
-// 本地化键格式
-// "item.spartan_weaponry_unofficial.longbow_diamond_strengthened": "Diamond-Strengthened Longbow"
-// "item.spartan_weaponry_unofficial.heavy_crossbow_iron_strengthened": "Iron-Strengthened Heavy Crossbow"
+// 普通翻译 key 来自附属模组自己的 namespace 和 registry id：
+// "item.mymodid.longsword_my_material": "My Material Longsword"
+// "item.mymodid.throwing_knife_my_material": "My Material Throwing Knife"
 ```
 
-**纹理文件命名**：强化武器的纹理文件名**不包含** `_strengthened` 后缀：
-- 注册名称: `longbow_diamond_strengthened`
-- 纹理路径: `textures/item/diamond_longbow_standby.png` (无 strengthened)
-- 纹理路径: `textures/item/iron_heavy_crossbow_standby.png` (无 strengthened)
+如果材质启用了 `setUseCustomDisplayName()`，创建出的物品会使用内置自定义显示 key，并把材质显示名作为 `%s` 参数。默认材质显示 key 格式如下：
+
+```json
+{
+  "material.mydepmod.my_material": "My Material",
+  "item.spartan_weaponry_unofficial.custom_longsword": "%s Longsword"
+}
+```
+
+### 强化长弓和重型弩
+
+附属长弓和重型弩建议沿用内置强化命名模式，方便资源包路径保持可预测：
+
+```java
+public static final DeferredHolder<Item, Item> MY_LONGBOW = ITEMS.register(
+    "longbow_my_material_strengthened",
+    () -> SpartanWeaponryAPI.createLongbow(MyModMaterials.MY_MATERIAL)
+);
+
+public static final DeferredHolder<Item, Item> MY_HEAVY_CROSSBOW = ITEMS.register(
+    "heavy_crossbow_my_material_strengthened",
+    () -> SpartanWeaponryAPI.createHeavyCrossbow(MyModMaterials.MY_MATERIAL)
+);
+```
+
+强化武器的纹理文件名不包含 `_strengthened` 后缀：
+
+- Registry id: `longbow_my_material_strengthened`
+- Texture path: `textures/item/my_material_longbow_standby.png`
+- Texture path: `textures/item/my_material_heavy_crossbow_standby.png`
 
 ---
 
 ## ✨ 武器特性 (Weapon Traits)
 
-特性通常通过 Tag 自动分配，但您也可以在定义 `WeaponMaterial` 时指定。常用特性包括：
+Weapon traits 通过 `spartan_weaponry_unofficial:weapon_traits` 注册表上的 tag 加载。常见内置 holder 包括：
 
-- `WeaponTraits.REACH`: 增加攻击距离 (`reach`)
-- `WeaponTraits.SWEEP_DAMAGE`: 增加横扫伤害 (`sweep_damage`)
-- `WeaponTraits.TWO_HANDED`: 双手武器，副手受限 (`two_handed`)
-- `WeaponTraits.ARMOUR_PIERCING`: 穿透部分护甲 (`armour_piercing`)
-- `WeaponTraits.THROWN`: 可投掷 (`thrown`)
+- `WeaponTraits.REACH_1`, `WeaponTraits.REACH_1_5`, `WeaponTraits.REACH_2`, `WeaponTraits.REACH_2_5`: 增加攻击距离 (`reach`)
+- `WeaponTraits.SWEEP_1`, `WeaponTraits.SWEEP_2`, `WeaponTraits.SWEEP_3`: 增加横扫伤害 (`sweep_damage`)
+- `WeaponTraits.ARMOR_PIERCING`: 穿透一定比例护甲 (`armor_piercing`)
+- `WeaponTraits.THROWABLE`: 让近战武器具备投掷 action trait (`throwable`)
+- `WeaponTraits.HAMMER_SLAM`: 战锤下砸 action trait (`hammer_slam`)
 
 ### 通过 Tag 添加特性 (推荐)
 
-在 `data/spartan_weaponry_unofficial/tags/weapon_traits/` 下创建 JSON 文件：
+在 `data/<namespace>/tags/spartan_weaponry_unofficial/weapon_traits/` 下创建 JSON 文件。材质特性通常放在 `materials/` 下：
 
 ```json
+// data/mydepmod/tags/spartan_weaponry_unofficial/weapon_traits/materials/my_material.json
 {
   "replace": false,
   "values": [
-    "mymodid:longsword_my_material"
+    "spartan_weaponry_unofficial:reach_1",
+    "spartan_weaponry_unofficial:fireproof"
   ]
 }
 ```
+
+---
+
+## 武器分类和 Tag Helper
+
+通过 API 创建的武器会自动按武器类型和材质分类。如果附属模组创建了兼容物品，但没有使用斯巴达武器工厂，可以手动接入分类系统：
+
+```java
+public static final DeferredHolder<Item, Item> MY_CUSTOM_SPEAR = ITEMS.register("custom_spear", () ->
+    SpartanWeaponryAPI.classifyWeapon(
+        new Item(new Item.Properties()),
+        WeaponItemType.SPEAR,
+        MyModMaterials.MY_MATERIAL
+    )
+);
+```
+
+物品注册完成后可以查询分类：
+
+```java
+SpartanWeaponryAPI.getWeaponClassification(MyModItems.MY_LONGSWORD.get())
+    .ifPresent(classification -> {
+        WeaponItemType weaponType = classification.weaponItemType();
+        WeaponMaterial material = classification.material();
+    });
+```
+
+标准 item tag helper：
+
+```java
+TagKey<Item> longswords = SpartanWeaponryAPI.getWeaponTag(WeaponItemType.LONGSWORD);
+TagKey<Item> steelWeapons = SpartanWeaponryAPI.getMaterialTag("steel");
+TagKey<Item> myModWeapons = SpartanWeaponryAPI.getNamespaceTag("mymodid");
+```
+
+标准分组 tag 路径：
+
+```text
+#spartan_weaponry_unofficial:weapons
+#spartan_weaponry_unofficial:weapons/longswords
+#spartan_weaponry_unofficial:weapons/spears
+#spartan_weaponry_unofficial:materials/steel
+#spartan_weaponry_unofficial:materials/diamond
+#spartan_weaponry_unofficial:mods/mymodid
+```
+
+内置武器 tag 由 Spartan Weaponry 生成。通过 API 创建的附属武器会自动获得运行时分类元数据，但真实 datapack tag JSON 仍应由附属模组 datagen、数据包或 KubeJS 脚本写入。
+
+```java
+public class MyItemTagsProvider extends ItemTagsProvider {
+    @Override
+    protected void addTags(HolderLookup.Provider registries) {
+        SpartanWeaponryAPI.forEachKnownWeaponTag("mymodid", (tag, item) ->
+            this.tag(tag).add(item)
+        );
+    }
+}
+```
+
+简单注册单把武器时继续使用旧 `createLongsword(material)` 风格。需要动态选择武器类型时使用 `createWeapon(WeaponItemType, material)`。只有自定义兼容物品没有使用斯巴达武器工厂时，才需要使用 `classifyWeapon(...)`。

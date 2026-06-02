@@ -12,14 +12,19 @@ description: Introduction to Spartan Weaponry Unofficial mod
 <p align="center">
   <img src="https://img.shields.io/badge/Minecraft-1.21.1-green?style=flat-square" alt="Minecraft Version">
   <img src="https://img.shields.io/badge/Loader-NeoForge-orange?style=flat-square" alt="Loader">
-  <img src="https://img.shields.io/github/license/Mai-xiyu/SpartanWeaponryUnofficial?style=flat-square" alt="License">
+  <img src="https://img.shields.io/badge/Java-21-blue?style=flat-square" alt="Java 21">
+  <img src="https://img.shields.io/badge/API-v14-purple?style=flat-square" alt="API Version">
+  <img src="https://img.shields.io/github/license/Mai-xiyu/SpartanWeaponry-NeoForge?style=flat-square" alt="License">
 </p>
 
 ## ✨ Features
 
 - **Diverse Arsenals**: Adds a plethora of new weapons inspired by historical and fantasy themes.
-- **Rich API**: Provides an easy-to-use API for developers to expand the weaponry.
+- **Rich API**: Provides legacy `createXxx(WeaponMaterial)` methods, a generic `createWeapon(...)` entry point, material builders, classification metadata, and tag helpers.
 - **Enhanced Compatibility**: Ported and optimized for modern Minecraft versions.
+- **Datapack-Friendly Tags**: Provides grouped item tags by weapon type, material, and source namespace for datapacks, modpacks, and KubeJS.
+- **Optional Weapon Oil**: Weapon Oil support is available but disabled by default through `enable_weapon_oil=false`.
+- **Regression Guidance**: Maintainer docs include manual checks for action traits, throwing weapon pickup, ammo state, and dedicated server behavior.
 
 ## 📥 Download & Installation
 
@@ -36,3 +41,9 @@ Supported Version: **Minecraft 1.21.1 (NeoForge)**
 :::note
 This is an unofficial port aimed at providing support for newer Minecraft versions.
 :::
+
+## Developer Links
+
+- [API Reference](./api-reference/)
+- [Resource Pack and Datapack Guide](./resource-pack-development-guide/)
+- [Source Repository](https://github.com/Mai-xiyu/SpartanWeaponry-NeoForge)

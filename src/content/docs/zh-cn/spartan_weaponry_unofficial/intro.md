@@ -12,14 +12,19 @@ description: 斯巴达武器非官方版模组介绍
 <p align="center">
   <img src="https://img.shields.io/badge/Minecraft-1.21.1-green?style=flat-square" alt="Minecraft Version">
   <img src="https://img.shields.io/badge/Loader-NeoForge-orange?style=flat-square" alt="Loader">
-  <img src="https://img.shields.io/github/license/Mai-xiyu/SpartanWeaponryUnofficial?style=flat-square" alt="License">
+  <img src="https://img.shields.io/badge/Java-21-blue?style=flat-square" alt="Java 21">
+  <img src="https://img.shields.io/badge/API-v14-purple?style=flat-square" alt="API Version">
+  <img src="https://img.shields.io/github/license/Mai-xiyu/SpartanWeaponry-NeoForge?style=flat-square" alt="License">
 </p>
 
 ## ✨ 特性
 
 - **多样化的武器库**: 增加了大量源自历史和奇幻题材的全新武器。
-- **丰富的 API**: 为开发者通过易用的 API 扩展更多武器。
+- **丰富的 API**: 保留旧版 `createXxx(WeaponMaterial)` 方法，同时提供通用 `createWeapon(...)`、材质 builder、武器分类元数据和 tag helper。
 - **更好的兼容性**: 针对现代 Minecraft 版本进行了移植和优化。
+- **数据包友好 Tag**: 按武器类型、材质和来源 namespace 提供分组物品 tag，方便数据包、整合包和 KubeJS 使用。
+- **可选武器油**: 武器油机制存在，但默认通过 `enable_weapon_oil=false` 关闭，需要整合包主动开启。
+- **回归测试指引**: 维护文档覆盖 action trait、投掷武器拾取、ammo 状态和专用服务端行为检查。
 
 ## 📥 下载与安装
 
@@ -36,3 +41,9 @@ description: 斯巴达武器非官方版模组介绍
 :::note
 这是一个非官方的移植版本，旨在为新版本 Minecraft 提供支持。
 :::
+
+## 开发者链接
+
+- [API 参考](./api-reference/)
+- [资源包与数据包指南](./resource-pack-development-guide/)
+- [源码仓库](https://github.com/Mai-xiyu/SpartanWeaponry-NeoForge)

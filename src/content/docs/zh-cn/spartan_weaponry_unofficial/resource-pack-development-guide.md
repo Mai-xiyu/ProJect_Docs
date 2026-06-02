@@ -606,5 +606,51 @@ MyResourcePack/
 
 ---
 
-*文档版本: 1.0.2 | 适用于 Spartan Weaponry Unofficial for NeoForge 1.21.1*  
-*更新日期: 2026-02-07*
+## 数据包 Item Tag
+
+Spartan Weaponry 会为内置武器生成标准 item tag。附属模组和整合包可以通过数据包或 KubeJS 扩展同一套 tag。
+
+标准分组 tag：
+
+```text
+#spartan_weaponry_unofficial:weapons
+#spartan_weaponry_unofficial:weapons/longswords
+#spartan_weaponry_unofficial:weapons/spears
+#spartan_weaponry_unofficial:weapons/heavy_crossbows
+#spartan_weaponry_unofficial:materials/steel
+#spartan_weaponry_unofficial:materials/diamond
+#spartan_weaponry_unofficial:mods/spartan_weaponry_unofficial
+#spartan_weaponry_unofficial:mods/<addon_mod_id>
+```
+
+旧的扁平 tag 仍然保留，例如 `#spartan_weaponry_unofficial:longsword`、`#spartan_weaponry_unofficial:spear`、`#spartan_weaponry_unofficial:steel_weapons`。新的分组 tag 对内置武器会引用旧 tag，避免两套列表漂移。
+
+数据包示例：
+
+```json
+// data/spartan_weaponry_unofficial/tags/item/materials/steel.json
+{
+  "replace": false,
+  "values": [
+    "mymodid:steel_longsword",
+    "mymodid:steel_spear"
+  ]
+}
+```
+
+KubeJS 示例：
+
+```js
+ServerEvents.tags("item", event => {
+  event.add("spartan_weaponry_unofficial:materials/steel", "mymodid:steel_longsword");
+  event.add("spartan_weaponry_unofficial:weapons/longswords", "mymodid:steel_longsword");
+  event.add("spartan_weaponry_unofficial:mods/mymodid", "mymodid:steel_longsword");
+});
+```
+
+武器油机制只有在 common config 中设置 `enable_weapon_oil=true` 后才启用。默认值是 `false`，因此整合包没有主动开启时，武器油配方、创造标签页油变体、涂油应用、战斗效果和油相关 HUD/tooltip 都不会作为有效机制显示。`disable_oil_recipes` 只在 `enable_weapon_oil=true` 后继续控制配方可用性。
+
+---
+
+*文档版本: 1.0.3 | 适用于 Spartan Weaponry Unofficial for NeoForge 1.21.1*
+*更新日期: 2026-06-02*
