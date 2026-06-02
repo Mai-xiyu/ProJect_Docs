@@ -1,4 +1,4 @@
----
+﻿---
 title: 斯巴达武器 (非官方版)
 description: 斯巴达武器非官方版模组介绍
 ---
@@ -29,7 +29,7 @@ description: 斯巴达武器非官方版模组介绍
 支持的版本：**Minecraft 1.21.1 (NeoForge)**
 
 <a href="https://www.curseforge.com/minecraft/mc-mods/spartan-weaponry-unofficial"><img src="https://img.shields.io/badge/CurseForge-下载-f16436?style=for-the-badge&logo=curseforge" alt="CurseForge"></a>
-<a href="https://modrinth.com/mod/spartan-wpn-uno"><img src="https://img.shields.io/badge/Modrinth-下载-1bd96a?style=for-the-badge&logo=modrinth" alt="Modrinth"></a>
+<a href="https://modrinth.com/mod/spartan-weaponry-unofficial"><img src="https://img.shields.io/badge/Modrinth-下载-1bd96a?style=for-the-badge&logo=modrinth" alt="Modrinth"></a>
 <a href="https://github.com/Mai-xiyu/SpartanWeaponry-NeoForge"><img src="https://img.shields.io/badge/GitHub-源码-181717?style=for-the-badge&logo=github" alt="GitHub"></a>
 
 1. **下载模组**：点击上方按钮下载最新版本。

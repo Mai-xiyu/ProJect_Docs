@@ -1,4 +1,4 @@
----
+﻿---
 title: Spartan Weaponry Unofficial
 description: Introduction to Spartan Weaponry Unofficial mod
 ---
@@ -29,7 +29,7 @@ description: Introduction to Spartan Weaponry Unofficial mod
 Supported Version: **Minecraft 1.21.1 (NeoForge)**
 
 <a href="https://www.curseforge.com/minecraft/mc-mods/spartan-weaponry-unofficial"><img src="https://img.shields.io/badge/CurseForge-Download-f16436?style=for-the-badge&logo=curseforge" alt="CurseForge"></a>
-<a href="https://modrinth.com/mod/spartan-wpn-uno"><img src="https://img.shields.io/badge/Modrinth-Download-1bd96a?style=for-the-badge&logo=modrinth" alt="Modrinth"></a>
+<a href="https://modrinth.com/mod/spartan-weaponry-unofficial"><img src="https://img.shields.io/badge/Modrinth-Download-1bd96a?style=for-the-badge&logo=modrinth" alt="Modrinth"></a>
 <a href="https://github.com/Mai-xiyu/SpartanWeaponry-NeoForge"><img src="https://img.shields.io/badge/GitHub-Source-181717?style=for-the-badge&logo=github" alt="GitHub"></a>
 
 1. **Download**: Click the buttons above to get the latest version.
