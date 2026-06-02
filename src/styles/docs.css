@@ -1,0 +1,101 @@
+@layer starlight.theme {
+  :root {
+    --sl-content-width: 50rem;
+    --sl-sidebar-width: 18rem;
+    --sl-text-h1: 2.25rem;
+    --sl-text-h2: 1.55rem;
+    --sl-text-h3: 1.2rem;
+    --sl-line-height: 1.72;
+    --sl-line-height-headings: 1.16;
+  }
+
+  :root[data-theme='light'] {
+    --sl-color-bg: #fbfbf8;
+    --sl-color-bg-nav: #ffffff;
+    --sl-color-bg-sidebar: #f6f6f1;
+    --sl-color-hairline: #e5e2d8;
+    --sl-color-hairline-light: #eeeae0;
+    --sl-color-accent: #2563eb;
+    --sl-color-accent-high: #1d4ed8;
+    --sl-color-text: #24211c;
+    --sl-color-white: #181714;
+  }
+
+  :root[data-theme='dark'] {
+    --sl-color-bg: #101214;
+    --sl-color-bg-nav: #14171a;
+    --sl-color-bg-sidebar: #121518;
+    --sl-color-hairline: #30353a;
+    --sl-color-hairline-light: #252a2f;
+    --sl-color-accent: #79a7ff;
+    --sl-color-accent-high: #a8c5ff;
+  }
+}
+
+@layer starlight.core {
+  body {
+    font-variant-ligatures: common-ligatures;
+    text-rendering: optimizeLegibility;
+  }
+
+  .sl-markdown-content {
+    line-height: var(--sl-line-height);
+  }
+
+  .sl-markdown-content > :first-child {
+    margin-top: 0;
+  }
+
+  .sl-markdown-content h2 {
+    border-top: 1px solid var(--sl-color-hairline-light);
+    margin-top: 2.75rem;
+    padding-top: 1.35rem;
+  }
+
+  .sl-markdown-content h2:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .sl-markdown-content h3 {
+    margin-top: 2rem;
+  }
+
+  .sl-markdown-content p,
+  .sl-markdown-content li {
+    color: var(--sl-color-gray-2);
+  }
+
+  .sl-markdown-content code:not(pre code) {
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 0.3rem;
+    padding: 0.08rem 0.28rem;
+  }
+
+  .sl-markdown-content pre {
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.5rem;
+  }
+
+  .sl-markdown-content table {
+    display: table;
+    width: 100%;
+    font-size: 0.92rem;
+  }
+
+  .sl-markdown-content th {
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-white);
+    font-weight: 650;
+  }
+
+  .sl-markdown-content td,
+  .sl-markdown-content th {
+    vertical-align: top;
+  }
+
+  .sl-markdown-content blockquote {
+    border-inline-start-color: var(--sl-color-accent);
+    color: var(--sl-color-gray-2);
+  }
+}

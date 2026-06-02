@@ -3,8 +3,6 @@ title: Spartan Weaponry Unofficial
 description: Introduction to Spartan Weaponry Unofficial mod
 ---
 
-# Spartan Weaponry Unofficial
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/Mai-xiyu/ProJect_Docs/refs/heads/master/public/img/sp_logo.png" alt="SPLogo" width="720" height="393">
 </p>
@@ -17,7 +15,7 @@ description: Introduction to Spartan Weaponry Unofficial mod
   <img src="https://img.shields.io/github/license/Mai-xiyu/SpartanWeaponry-NeoForge?style=flat-square" alt="License">
 </p>
 
-## ✨ Features
+## Features
 
 - **Diverse Arsenals**: Adds a plethora of new weapons inspired by historical and fantasy themes.
 - **Rich API**: Provides legacy `createXxx(WeaponMaterial)` methods, a generic `createWeapon(...)` entry point, material builders, classification metadata, and tag helpers.
@@ -26,7 +24,7 @@ description: Introduction to Spartan Weaponry Unofficial mod
 - **Optional Weapon Oil**: Weapon Oil support is available but disabled by default through `enable_weapon_oil=false`.
 - **Regression Guidance**: Maintainer docs include manual checks for action traits, throwing weapon pickup, ammo state, and dedicated server behavior.
 
-## 📥 Download & Installation
+## Download & Installation
 
 Supported Version: **Minecraft 1.21.1 (NeoForge)**
 

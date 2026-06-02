@@ -30,6 +30,10 @@ export default defineConfig({
           href: 'https://github.com/Mai-xiyu/OneKeyMiner',
         },
       ],
+      customCss: ['./src/styles/docs.css'],
+      components: {
+        PageTitle: './src/components/MarkdownCopyTitle.astro',
+      },
       sidebar: [
         {
           label: 'OneKeyMiner',

@@ -3,14 +3,12 @@ title: Spartan Weaponry Unofficial 资源包开发指南
 description: 为资源包作者提供的完整纹理、模型和音效替换指南
 ---
 
-# Spartan Weaponry Unofficial 资源包开发指南
-
 本文档为资源包作者提供了 `Spartan Weaponry Unofficial` 模组的资源结构详解，帮助您创建自定义纹理、模型或音效。
 
 
-## 📁 资源目录结构概览
+## 资源目录结构概览
 
-> ⚠️ **重要变更**: 从 1.0.2 版本开始，资源路径使用 `spartan_weaponry_unofficial` (下划线)。
+> **重要变更**: 从 1.0.2 版本开始，资源路径使用 `spartan_weaponry_unofficial` (下划线)。
 
 ```
 assets/spartan_weaponry_unofficial/
@@ -37,7 +35,7 @@ assets/spartan_weaponry_unofficial/
 
 ---
 
-## 🗡️ 武器纹理
+## 武器纹理
 
 ### 支持的材质类型
 
@@ -120,7 +118,7 @@ assets/spartan_weaponry_unofficial/textures/item/diamond_battle_hammer.png
 | 拉弓 1 | `{材质}_longbow_pulling_1.png` |
 | 拉弓 2 | `{材质}_longbow_pulling_2.png` |
 
-> 📝 **注意**: 长弓的注册名包含 `_strengthened` 后缀（如 `longbow_iron_strengthened`），但纹理文件名不包含此后缀。
+> **注意**: 长弓的注册名包含 `_strengthened` 后缀（如 `longbow_iron_strengthened`），但纹理文件名不包含此后缀。
 
 **示例：**
 ```
@@ -142,11 +140,11 @@ assets/spartan_weaponry_unofficial/textures/item/iron_longbow_pulling_2.png
 | 上弦 2 | `{材质}_heavy_crossbow_pulling_2.png` |
 | 已装填 | `{材质}_heavy_crossbow_loaded.png` |
 
-> 📝 **注意**: 重型弩的注册名包含 `_strengthened` 后缀（如 `heavy_crossbow_iron_strengthened`），但纹理文件名不包含此后缀。
+> **注意**: 重型弩的注册名包含 `_strengthened` 后缀（如 `heavy_crossbow_iron_strengthened`），但纹理文件名不包含此后缀。
 
 ---
 
-## 🎯 涂油覆盖层纹理
+## 涂油覆盖层纹理
 
 武器涂油后会显示一个覆盖层纹理。这些纹理位于 `textures/item/coating/` 目录：
 
@@ -174,11 +172,11 @@ assets/spartan_weaponry_unofficial/textures/item/iron_longbow_pulling_2.png
 | 木棍 | `coating/club.png` |
 | 原版剑 | `coating/vanilla_sword.png` |
 
-> 💡 **提示**：覆盖层纹理使用模型的自定义加载器 `spartan_weaponry_unofficial:oil_coated_item` 来渲染。
+> **提示**：覆盖层纹理使用模型的自定义加载器 `spartan_weaponry_unofficial:oil_coated_item` 来渲染。
 
 ---
 
-## 🏹 弹药纹理
+## 弹药纹理
 
 ### 箭矢
 
@@ -235,7 +233,7 @@ assets/spartan_weaponry_unofficial/textures/item/iron_longbow_pulling_2.png
 
 ---
 
-## 🎒 箭袋纹理
+## 箭袋纹理
 
 箭袋有多个尺寸和填充状态，需要多个纹理文件：
 
@@ -248,7 +246,7 @@ assets/spartan_weaponry_unofficial/textures/item/iron_longbow_pulling_2.png
 | 大 | `large_arrow_quiver_base.png` | `large_arrow_quiver_1/2/3/4/5.png` | `large_quiver_brace.png` |
 | 巨大 | `huge_arrow_quiver_base.png` | `huge_arrow_quiver_1/2/3/4/5.png` | `huge_quiver_brace.png` |
 
-> 📝 **注意**：弩矢箭袋 (`bolt_quiver`) 使用相同的命名模式，只需将 `arrow` 替换为 `bolt`。
+> **注意**：弩矢箭袋 (`bolt_quiver`) 使用相同的命名模式，只需将 `arrow` 替换为 `bolt`。
 
 ### 3D 模型纹理 (textures/model/)
 
@@ -294,7 +292,7 @@ empty_large_quiver_brace_slot.png
 
 ---
 
-## 💀 头颅纹理
+## 头颅纹理
 
 模组添加了多种怪物头颅，纹理位于 `textures/entity/skull/`：
 
@@ -304,11 +302,11 @@ empty_large_quiver_brace_slot.png
 | 末影人头 | `enderman_head.png` |
 | 流浪者头骨 | `stray_skull.png` |
 
-> 📝 **注意**：其他头颅（烈焰人、蜘蛛、洞穴蜘蛛、尸壳、女巫、灾厄村民、僵尸猪灵）使用原版纹理或其他来源。
+> **注意**：其他头颅（烈焰人、蜘蛛、洞穴蜘蛛、尸壳、女巫、灾厄村民、僵尸猪灵）使用原版纹理或其他来源。
 
 ---
 
-## 🎨 GUI 与 HUD 纹理
+## GUI 与 HUD 纹理
 
 ### 准星 (Crosshairs)
 
@@ -326,7 +324,7 @@ textures/mob_effect/ender_disruption.png  # 末影扰乱效果图标
 
 ---
 
-## ✨ 粒子效果
+## 粒子效果
 
 ### 粒子定义文件 (particles/)
 
@@ -356,7 +354,7 @@ damage_reduced.png   # 伤害减免粒子
 
 ---
 
-## 🔊 音效
+## 音效
 
 模组使用以下音效事件，您可以通过资源包替换：
 
@@ -404,7 +402,7 @@ assets/spartan_weaponry_unofficial/sounds/custom/boomerang_throw.ogg
 
 ---
 
-## 📐 模型系统
+## 模型系统
 
 ### 基础模型 (models/item/base/)
 
@@ -466,7 +464,7 @@ assets/spartan_weaponry_unofficial/sounds/custom/boomerang_throw.ogg
 
 ---
 
-## 🌐 语言文件
+## 语言文件
 
 模组支持以下语言：
 
@@ -513,7 +511,7 @@ assets/spartan_weaponry_unofficial/sounds/custom/boomerang_throw.ogg
 
 ---
 
-## 📦 资源包示例结构
+## 资源包示例结构
 
 以下是一个替换铁质武器纹理的资源包结构示例：
 
@@ -546,13 +544,13 @@ MyResourcePack/
 }
 ```
 
-> 📝 **pack_format** 版本对照：
+> **pack_format** 版本对照：
 > - Minecraft 1.21.x: `pack_format: 34`
 > - Minecraft 1.20.x: `pack_format: 15-22`
 
 ---
 
-## 💡 提示与技巧
+## 提示与技巧
 
 ### 1. 纹理尺寸
 
@@ -587,7 +585,7 @@ MyResourcePack/
 
 ---
 
-## 📚 附录：完整纹理清单
+## 附录：完整纹理清单
 
 ### 武器纹理数量统计
 

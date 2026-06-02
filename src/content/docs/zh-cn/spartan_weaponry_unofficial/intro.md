@@ -3,8 +3,6 @@ title: 斯巴达武器 (非官方版)
 description: 斯巴达武器非官方版模组介绍
 ---
 
-# Spartan Weaponry Unofficial
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/Mai-xiyu/ProJect_Docs/refs/heads/master/public/img/sp_logo.png" alt="SPLogo" width="720" height="393">
 </p>
@@ -17,7 +15,7 @@ description: 斯巴达武器非官方版模组介绍
   <img src="https://img.shields.io/github/license/Mai-xiyu/SpartanWeaponry-NeoForge?style=flat-square" alt="License">
 </p>
 
-## ✨ 特性
+## 特性
 
 - **多样化的武器库**: 增加了大量源自历史和奇幻题材的全新武器。
 - **丰富的 API**: 保留旧版 `createXxx(WeaponMaterial)` 方法，同时提供通用 `createWeapon(...)`、材质 builder、武器分类元数据和 tag helper。
@@ -26,7 +24,7 @@ description: 斯巴达武器非官方版模组介绍
 - **可选武器油**: 武器油机制存在，但默认通过 `enable_weapon_oil=false` 关闭，需要整合包主动开启。
 - **回归测试指引**: 维护文档覆盖 action trait、投掷武器拾取、ammo 状态和专用服务端行为检查。
 
-## 📥 下载与安装
+## 下载与安装
 
 支持的版本：**Minecraft 1.21.1 (NeoForge)**
 

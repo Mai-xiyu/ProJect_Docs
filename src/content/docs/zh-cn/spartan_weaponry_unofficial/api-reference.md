@@ -3,11 +3,9 @@ title: Spartan Weaponry Unofficial API 参考
 description: Spartan Weaponry Unofficial 模组的详细 API 文档与示例代码。
 ---
 
-# Spartan Weaponry Unofficial API 参考
+本文档说明 `Spartan Weaponry Unofficial` 面向附属模组的公开 API。你可以用它为其他模组提供的材质注册斯巴达风格武器、声明兼容武器分类，并写入对应的数据包 tag。
 
-本文档提供了 `Spartan Weaponry Unofficial` 模组的 API 开发指南。开发者可以使用此 API 为从其他模组添加的材质注册新的斯巴达武器。
-
-## 📦 依赖配置 (Gradle)
+## 依赖配置 (Gradle)
 
 首先，您需要在 `build.gradle` 中添加 Spartan Weaponry Unofficial 作为依赖项。
 
@@ -29,12 +27,11 @@ dependencies {
 }
 ```
 
-## 🚀 快速入门
+## 快速入门
 
 主要的 API 入口点是 `org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI` 类。
 
-> ⚠️ **重要变更**: 从 1.0.2 版本开始，Mod ID 已更改为 `spartan_weaponry_unofficial`。  
-> 💡 **注意**: Java 包名仍然使用 `spartanweaponryunofficial`（无下划线），而 Mod ID 和资源路径使用 `spartan_weaponry_unofficial`（带下划线）。
+> **Mod ID 说明**：从 1.0.2 开始，Mod ID 是 `spartan_weaponry_unofficial`。Java 包名仍然使用无下划线的 `spartanweaponryunofficial`，Mod ID 与资源路径使用带下划线的 `spartan_weaponry_unofficial`。
 
 ### 1. 定义武器材质
 
@@ -44,7 +41,7 @@ dependencies {
 ```java
 import org.xiyu.spartanweaponryunofficial.api.WeaponMaterial;
 
-// 预定义材质: WOOL, STONE, IRON, GOLD, DIAMOND, NETHERITE 等
+// 预定义材质: WOOD, STONE, IRON, GOLD, DIAMOND, NETHERITE 等
 WeaponMaterial material = WeaponMaterial.IRON;
 ```
 
@@ -132,7 +129,7 @@ public MyMod() {
 
 ---
 
-## 🛠️ 武器创建方法
+## 武器创建方法
 
 所有方法均位于 `SpartanWeaponryAPI`，返回值是**尚未注册的** `Item`。调用方仍然需要在自己的 `DeferredRegister` 中决定 registry id。
 
@@ -178,7 +175,7 @@ Item item = SpartanWeaponryAPI.createWeapon(
 
 ---
 
-## 📝 命名规则说明
+## 命名规则说明
 
 API 工厂方法不会分配 registry id；id 就是您传给 `DeferredRegister` 的字符串。
 
@@ -233,7 +230,7 @@ public static final DeferredHolder<Item, Item> MY_HEAVY_CROSSBOW = ITEMS.registe
 
 ---
 
-## ✨ 武器特性 (Weapon Traits)
+## 武器特性 (Weapon Traits)
 
 Weapon traits 通过 `spartan_weaponry_unofficial:weapon_traits` 注册表上的 tag 加载。常见内置 holder 包括：
 

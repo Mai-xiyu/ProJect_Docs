@@ -3,13 +3,11 @@ title: Spartan Weaponry Unofficial Resource Pack Development Guide
 description: Complete guide for resource pack authors on texture, model, and sound replacement
 ---
 
-# Spartan Weaponry Unofficial Resource Pack Development Guide
-
 This document provides a detailed resource structure guide for the `Spartan Weaponry Unofficial` mod, helping you create custom textures, models, or sounds.
 
-## 📁 Resource Directory Structure Overview
+## Resource Directory Structure Overview
 
-> ⚠️ **Important Change**: Starting from version 1.0.2, resource paths use `spartan_weaponry_unofficial` (with underscores).
+> **Important change**: Starting from version 1.0.2, resource paths use `spartan_weaponry_unofficial` (with underscores).
 
 ```
 assets/spartan_weaponry_unofficial/
@@ -36,7 +34,7 @@ assets/spartan_weaponry_unofficial/
 
 ---
 
-## 🗡️ Weapon Textures
+## Weapon Textures
 
 ### Supported Material Types
 
@@ -141,7 +139,7 @@ Heavy crossbows require 5 texture files:
 
 ---
 
-## 🎯 Oil Coating Overlay Textures
+## Oil Coating Overlay Textures
 
 Oiled weapons display an overlay texture. These textures are located in the `textures/item/coating/` directory:
 
@@ -169,11 +167,11 @@ Oiled weapons display an overlay texture. These textures are located in the `tex
 | Club | `coating/club.png` |
 | Vanilla Sword | `coating/vanilla_sword.png` |
 
-> 💡 **Tip**: Overlay textures use the model's custom loader `spartan_weaponry_unofficial:oil_coated_item` for rendering.
+> **Tip**: Overlay textures use the model's custom loader `spartan_weaponry_unofficial:oil_coated_item` for rendering.
 
 ---
 
-## 🏹 Ammunition Textures
+## Ammunition Textures
 
 ### Arrows
 
@@ -230,7 +228,7 @@ Tipped arrows use layered textures:
 
 ---
 
-## 🎒 Quiver Textures
+## Quiver Textures
 
 Quivers have multiple sizes and fill states, requiring multiple texture files:
 
@@ -243,7 +241,7 @@ Quivers have multiple sizes and fill states, requiring multiple texture files:
 | Large | `large_arrow_quiver_base.png` | `large_arrow_quiver_1/2/3/4/5.png` | `large_quiver_brace.png` |
 | Huge | `huge_arrow_quiver_base.png` | `huge_arrow_quiver_1/2/3/4/5.png` | `huge_quiver_brace.png` |
 
-> 📝 **Note**: Bolt quivers (`bolt_quiver`) use the same naming pattern, just replace `arrow` with `bolt`.
+> **Note**: Bolt quivers (`bolt_quiver`) use the same naming pattern, just replace `arrow` with `bolt`.
 
 ### 3D Model Textures (textures/model/)
 
@@ -289,7 +287,7 @@ empty_large_quiver_brace_slot.png
 
 ---
 
-## 💀 Skull Textures
+## Skull Textures
 
 The mod adds various mob skulls, with textures located in `textures/entity/skull/`:
 
@@ -299,11 +297,11 @@ The mod adds various mob skulls, with textures located in `textures/entity/skull
 | Enderman Head | `enderman_head.png` |
 | Stray Skull | `stray_skull.png` |
 
-> 📝 **Note**: Other skulls (Blaze, Spider, Cave Spider, Husk, Witch, Illager, Zombie Piglin) use vanilla textures or other sources.
+> **Note**: Other skulls (Blaze, Spider, Cave Spider, Husk, Witch, Illager, Zombie Piglin) use vanilla textures or other sources.
 
 ---
 
-## 🎨 GUI and HUD Textures
+## GUI and HUD Textures
 
 ### Crosshairs
 
@@ -321,7 +319,7 @@ textures/mob_effect/ender_disruption.png  # Ender Disruption effect icon
 
 ---
 
-## ✨ Particle Effects
+## Particle Effects
 
 ### Particle Definition Files (particles/)
 
@@ -351,7 +349,7 @@ damage_reduced.png   # Damage reduction particle
 
 ---
 
-## 🔊 Sounds
+## Sounds
 
 The mod uses the following sound events, which you can replace via resource pack:
 
@@ -399,7 +397,7 @@ assets/spartan_weaponry_unofficial/sounds/custom/boomerang_throw.ogg
 
 ---
 
-## 📐 Model System
+## Model System
 
 ### Base Models (models/item/base/)
 
@@ -461,7 +459,7 @@ Here's a complete model file example for a longsword:
 
 ---
 
-## 🌐 Language Files
+## Language Files
 
 The mod supports the following languages:
 
@@ -510,7 +508,7 @@ The mod supports the following languages:
 
 ---
 
-## 📦 Resource Pack Example Structure
+## Resource Pack Example Structure
 
 Here's an example resource pack structure for replacing iron weapon textures:
 
@@ -543,13 +541,13 @@ MyResourcePack/
 }
 ```
 
-> 📝 **pack_format** version reference:
+> **pack_format** version reference:
 > - Minecraft 1.21.x: `pack_format: 34`
 > - Minecraft 1.20.x: `pack_format: 15-22`
 
 ---
 
-## 💡 Tips and Tricks
+## Tips and Tricks
 
 ### 1. Texture Dimensions
 
@@ -584,7 +582,7 @@ Projectile entity textures (arrows, bolts) are located in `textures/entity/proje
 
 ---
 
-## 📚 Appendix: Complete Texture Checklist
+## Appendix: Complete Texture Checklist
 
 ### Weapon Texture Count Statistics
 

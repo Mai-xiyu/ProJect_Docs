@@ -1,0 +1,169 @@
+---
+import { Buffer } from 'node:buffer';
+import { readFileSync } from 'node:fs';
+
+const { starlightRoute } = Astro.locals;
+const title = starlightRoute.entry.data.title;
+const filePath = starlightRoute.entry.filePath;
+const isChinese = starlightRoute.lang.toLowerCase().startsWith('zh');
+
+let markdownBase64 = '';
+
+if (filePath) {
+  try {
+    markdownBase64 = Buffer.from(readFileSync(filePath, 'utf8'), 'utf8').toString('base64');
+  } catch {
+    markdownBase64 = '';
+  }
+}
+
+const copyLabel = isChinese ? '复制 Markdown' : 'Copy Markdown';
+const copiedLabel = isChinese ? '已复制' : 'Copied';
+const failedLabel = isChinese ? '复制失败' : 'Copy failed';
+---
+
+<div class="doc-titlebar">
+  <h1 id="_top">{title}</h1>
+  {
+    markdownBase64 && (
+      <button
+        type="button"
+        class="copy-markdown-button"
+        data-markdown-base64={markdownBase64}
+        data-label-ready={copyLabel}
+        data-label-success={copiedLabel}
+        data-label-error={failedLabel}
+      >
+        <span class="copy-markdown-button__label">{copyLabel}</span>
+      </button>
+    )
+  }
+</div>
+
+<script>
+  const decodeBase64Utf8 = (value) => {
+    const binary = atob(value);
+    const bytes = new Uint8Array(binary.length);
+
+    for (let index = 0; index < binary.length; index += 1) {
+      bytes[index] = binary.charCodeAt(index);
+    }
+
+    return new TextDecoder().decode(bytes);
+  };
+
+  const writeClipboard = async (text) => {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.inset = '0 auto auto 0';
+    textarea.style.opacity = '0';
+    document.body.append(textarea);
+    textarea.select();
+
+    const copied = document.execCommand('copy');
+    textarea.remove();
+
+    if (!copied) {
+      throw new Error('Clipboard fallback failed.');
+    }
+  };
+
+  document.addEventListener('click', async (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const button = target?.closest('.copy-markdown-button');
+
+    if (!(button instanceof HTMLButtonElement)) {
+      return;
+    }
+
+    const label = button.querySelector('.copy-markdown-button__label');
+    const readyLabel = button.dataset.labelReady ?? 'Copy Markdown';
+    const successLabel = button.dataset.labelSuccess ?? 'Copied';
+    const errorLabel = button.dataset.labelError ?? 'Copy failed';
+    const markdown = decodeBase64Utf8(button.dataset.markdownBase64 ?? '');
+
+    button.disabled = true;
+
+    try {
+      await writeClipboard(markdown);
+      if (label) label.textContent = successLabel;
+    } catch {
+      if (label) label.textContent = errorLabel;
+    } finally {
+      window.setTimeout(() => {
+        if (label) label.textContent = readyLabel;
+        button.disabled = false;
+      }, 1600);
+    }
+  });
+</script>
+
+<style>
+  @layer starlight.core {
+    .doc-titlebar {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+
+    .doc-titlebar h1 {
+      min-width: 0;
+      margin: 0;
+      color: var(--sl-color-white);
+      font-size: var(--sl-text-h1);
+      font-weight: 650;
+      letter-spacing: 0;
+      line-height: var(--sl-line-height-headings);
+    }
+
+    .copy-markdown-button {
+      flex: none;
+      margin-top: 0.2rem;
+      border: 1px solid var(--sl-color-gray-5);
+      border-radius: 0.45rem;
+      background: var(--sl-color-bg);
+      color: var(--sl-color-gray-2);
+      cursor: pointer;
+      font: inherit;
+      font-size: var(--sl-text-sm);
+      font-weight: 600;
+      line-height: 1;
+      padding: 0.55rem 0.75rem;
+    }
+
+    .copy-markdown-button:hover {
+      border-color: var(--sl-color-accent);
+      color: var(--sl-color-white);
+    }
+
+    .copy-markdown-button:focus-visible {
+      outline: 2px solid var(--sl-color-accent);
+      outline-offset: 2px;
+    }
+
+    .copy-markdown-button:disabled {
+      cursor: default;
+      opacity: 0.72;
+    }
+
+    @media (max-width: 50rem) {
+      .doc-titlebar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .copy-markdown-button {
+        align-self: flex-start;
+      }
+    }
+  }
+</style>

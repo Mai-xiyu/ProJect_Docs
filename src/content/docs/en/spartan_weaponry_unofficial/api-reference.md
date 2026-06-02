@@ -3,11 +3,9 @@ title: Spartan Weaponry Unofficial API Reference
 description: Detailed API documentation and code examples for Spartan Weaponry Unofficial.
 ---
 
-# Spartan Weaponry Unofficial API Reference
+This page documents the addon-facing API for `Spartan Weaponry Unofficial`. Use it to register Spartan-style weapons for materials added by another mod, classify compatible items, and write matching datapack tags.
 
-This document provides the API development guide for the `Spartan Weaponry Unofficial` mod. Developers can use this API to register new Spartan weapons for materials added by other mods.
-
-## 📦 Dependency Configuration (Gradle)
+## Dependency Configuration (Gradle)
 
 First, you need to add Spartan Weaponry Unofficial as a dependency in your `build.gradle`.
 
@@ -29,12 +27,11 @@ dependencies {
 }
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 The main API entry point is the `org.xiyu.spartanweaponryunofficial.api.SpartanWeaponryAPI` class.
 
-> ⚠️ **Important Change**: Starting from version 1.0.2, the Mod ID has been changed to `spartan_weaponry_unofficial`.  
-> 💡 **Note**: The Java package name remains `spartanweaponryunofficial` (without underscores), while the Mod ID and resource paths use `spartan_weaponry_unofficial` (with underscores).
+> **Mod ID note**: Starting from version 1.0.2, the Mod ID is `spartan_weaponry_unofficial`. The Java package name remains `spartanweaponryunofficial` without underscores, while the Mod ID and resource paths use `spartan_weaponry_unofficial`.
 
 ### 1. Define Weapon Material
 
@@ -133,7 +130,7 @@ Use version `14` when relying on weapon classification metadata, grouped tag hel
 
 ---
 
-## 🛠️ Weapon Creation Methods
+## Weapon Creation Methods
 
 All methods are located in the `SpartanWeaponryAPI` class and return an unregistered `Item`. The caller chooses the registry id in its own `DeferredRegister`.
 
@@ -183,7 +180,7 @@ The custom display keys above are used only when the material has `setUseCustomD
 
 ---
 
-## 📝 Naming Convention Details
+## Naming Convention Details
 
 The API factory methods do not assign registry ids. The id is the string passed to your `DeferredRegister`.
 
@@ -237,7 +234,7 @@ Texture file naming for strengthened weapons does not include the `_strengthened
 
 ---
 
-## ✨ Weapon Traits
+## Weapon Traits
 
 Traits are loaded through tags on the `spartan_weaponry_unofficial:weapon_traits` registry. Common built-in holders include:
 
