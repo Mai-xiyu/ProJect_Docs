@@ -11,7 +11,7 @@ description: 斯巴达武器非官方版模组介绍
   <img src="https://img.shields.io/badge/Minecraft-1.21.1-green?style=flat-square" alt="Minecraft Version">
   <img src="https://img.shields.io/badge/Loader-NeoForge-orange?style=flat-square" alt="Loader">
   <img src="https://img.shields.io/badge/Java-21-blue?style=flat-square" alt="Java 21">
-  <img src="https://img.shields.io/badge/API-v14-purple?style=flat-square" alt="API Version">
+  <img src="https://img.shields.io/badge/API-v15-purple?style=flat-square" alt="API Version">
   <img src="https://img.shields.io/github/license/Mai-xiyu/SpartanWeaponry-NeoForge?style=flat-square" alt="License">
 </p>
 
