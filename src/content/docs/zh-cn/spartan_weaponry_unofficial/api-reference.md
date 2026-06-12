@@ -82,6 +82,22 @@ WeaponMaterial builtMaterial = WeaponMaterial.builder("my_material", "mydepmod")
     .build();
 ```
 
+挖掘等级行为（1.2.1 起）：通过原版 `Tier`（构造函数或 `Builder.tier(...)`）创建的材质会继承该 Tier 的 `getIncorrectBlocksForDrops()` 标签，多用途武器（战斧、战锤等）的采集判定使用该标签。仅用裸数值创建的材质默认 `BlockTags.INCORRECT_FOR_WOODEN_TOOL`，需要时可显式覆盖：
+
+```java
+WeaponMaterial myMaterial = WeaponMaterial.builder("my_material", "mydepmod")
+    .durability(900)
+    .speed(7.0f)
+    .baseDamage(3.0f)
+    .enchantability(18)
+    .incorrectBlocksForDrops(BlockTags.INCORRECT_FOR_IRON_TOOL) // API 15
+    .repairTag(MY_INGOT)
+    .traitsTag(MY_MATERIAL_TRAITS)
+    .build();
+```
+
+材质颜色可用 `WeaponMaterial.colorRGB(int r, int g, int b)`（API 15）从 RGB 分量合成，分量自动钳制到 0-255；旧的 `colorRGB(byte, byte, byte)` 重载现按无符号字节处理参数。
+
 ### 2. 注册武器
 
 建议使用 NeoForge/Forge 的 `DeferredRegister` 来注册物品。
@@ -120,12 +136,14 @@ public class MyModItems {
 
 ```java
 public MyMod() {
-    // 需要分类元数据、分组 tag helper、createWeapon(...) 或 WeaponMaterial.builder(...) 时使用 14。
-    SpartanWeaponryAPI.assertAPIVersion("mymodid", 14);
+    // 需要 registry 访问器、colorRGB(int,int,int) 或挖掘等级控制时使用 15。
+    SpartanWeaponryAPI.assertAPIVersion("mymodid", 15);
 }
 ```
 
-如果附属模组只使用旧的 `createXxx(WeaponMaterial)` 方法，可以继续请求旧版本；只有使用新 API 时才需要提高到对应版本。API 14 会为所有通过 API 创建的武器记录分类元数据。
+如果附属模组只使用旧的 `createXxx(WeaponMaterial)` 方法，可以继续请求旧版本；只有使用新 API 时才需要提高到对应版本。API 14 会为所有通过 API 创建的武器记录分类元数据；API 15 新增 `WeaponTraits.registry()` / `OilEffects.registry()` 访问器、`WeaponMaterial.colorRGB(int, int, int)`、挖掘等级标签控制以及 `WeaponTrait.getModId()` / `getQuality()`。
+
+> `SpartanWeaponryAPI.init(...)` 与 `IInternalMethodHandler` 已标注 `@ApiStatus.Internal`，仅供模组自身引导使用，附属请勿调用或实现。
 
 ---
 
@@ -240,6 +258,8 @@ Weapon traits 通过 `spartan_weaponry_unofficial:weapon_traits` 注册表上的
 - `WeaponTraits.THROWABLE`: 让近战武器具备投掷 action trait (`throwable`)
 - `WeaponTraits.HAMMER_SLAM`: 战锤下砸 action trait (`hammer_slam`)
 
+行为说明（1.2.1 起）：横扫特性通过原版 `SWEEPING_DAMAGE_RATIO` 属性生效，与 Minecraft 1.21 计算横扫伤害的方式一致。自定义横扫类特性应继承 `SweepWeaponTrait`，或以相同方式添加属性修饰符。
+
 ### 通过 Tag 添加特性 (推荐)
 
 在 `data/<namespace>/tags/spartan_weaponry_unofficial/weapon_traits/` 下创建 JSON 文件。材质特性通常放在 `materials/` 下：
@@ -254,6 +274,29 @@ Weapon traits 通过 `spartan_weaponry_unofficial:weapon_traits` 注册表上的
   ]
 }
 ```
+
+### 注册自定义特性与武器油 (API 15)
+
+武器特性与油效果存放在真实注册表中。附属可对暴露的注册表 key 创建自己的 `DeferredRegister`：
+
+```java
+import net.neoforged.neoforge.registries.DeferredRegister;
+import org.xiyu.spartanweaponryunofficial.api.OilEffects;
+import org.xiyu.spartanweaponryunofficial.api.WeaponTraits;
+import org.xiyu.spartanweaponryunofficial.api.oil.OilEffect;
+import org.xiyu.spartanweaponryunofficial.api.trait.WeaponTrait;
+
+public static final DeferredRegister<WeaponTrait> TRAITS =
+        DeferredRegister.create(WeaponTraits.REGISTRY_KEY, "mymodid");
+public static final DeferredRegister<OilEffect> OILS =
+        DeferredRegister.create(OilEffects.REGISTRY_KEY, "mymodid");
+
+// 模组构造函数中：
+// TRAITS.register(modBus);
+// OILS.register(modBus);
+```
+
+注册表构建完成后，可用 `WeaponTraits.registry()` 与 `OilEffects.registry()` 查询。`WeaponTrait` 提供 `getType()`、`getModId()`、`getQuality()`、`getLevel()`、`getMagnitude()` 用于自省。
 
 ---
 

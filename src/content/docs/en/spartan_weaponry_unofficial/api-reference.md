@@ -83,6 +83,27 @@ WeaponMaterial myBuiltMaterial = WeaponMaterial.builder("my_material", "mydepmod
     .build();
 ```
 
+Mining-level behaviour (since 1.2.1): materials built from a vanilla `Tier` (constructor or
+`Builder.tier(...)`) inherit the tier's `getIncorrectBlocksForDrops()` tag, which versatile
+weapons (battleaxe, warhammer, etc.) use for harvest checks. Materials built from raw numbers
+default to `BlockTags.INCORRECT_FOR_WOODEN_TOOL`; override it explicitly when needed:
+
+```java
+WeaponMaterial myMaterial = WeaponMaterial.builder("my_material", "mydepmod")
+    .durability(900)
+    .speed(7.0f)
+    .baseDamage(3.0f)
+    .enchantability(18)
+    .incorrectBlocksForDrops(BlockTags.INCORRECT_FOR_IRON_TOOL) // API 15
+    .repairTag(MY_INGOT)
+    .traitsTag(MY_MATERIAL_TRAITS)
+    .build();
+```
+
+Material colours can be combined from RGB components with `WeaponMaterial.colorRGB(int r, int g, int b)`
+(API 15). Each component is clamped to 0-255; the older `colorRGB(byte, byte, byte)` overload now
+treats its arguments as unsigned bytes.
+
 ### 2. Register Weapons
 
 It is recommended to use NeoForge/Forge's `DeferredRegister` to register items.
@@ -121,12 +142,14 @@ To ensure compatibility, it is recommended to check the API version in your mod 
 
 ```java
 public MyMod() {
-    // Ensure API version is at least 14
-    SpartanWeaponryAPI.assertAPIVersion("mymodid", 14);
+    // Ensure API version is at least 15
+    SpartanWeaponryAPI.assertAPIVersion("mymodid", 15);
 }
 ```
 
-Use version `14` when relying on weapon classification metadata, grouped tag helpers, `createWeapon(...)`, `WeaponItemType`, or `WeaponMaterial.builder(...)`. Existing addons that only use the older `createXxx(WeaponMaterial)` methods remain compatible with their previous version check.
+Use version `14` when relying on weapon classification metadata, grouped tag helpers, `createWeapon(...)`, `WeaponItemType`, or `WeaponMaterial.builder(...)`. Use version `15` when additionally relying on `WeaponTraits.registry()` / `OilEffects.registry()`, `WeaponMaterial.colorRGB(int, int, int)`, incorrect-blocks-for-drops control, or `WeaponTrait.getModId()` / `getQuality()`. Existing addons that only use the older `createXxx(WeaponMaterial)` methods remain compatible with their previous version check.
+
+> `SpartanWeaponryAPI.init(...)` and `IInternalMethodHandler` are marked `@ApiStatus.Internal`. They exist for the mod's own bootstrap; addons must not call or implement them.
 
 ---
 
@@ -244,6 +267,10 @@ Traits are loaded through tags on the `spartan_weaponry_unofficial:weapon_traits
 - `WeaponTraits.THROWABLE`: makes a melee weapon throwable (`throwable`)
 - `WeaponTraits.HAMMER_SLAM`: hammer slam action trait (`hammer_slam`)
 
+Behaviour note (since 1.2.1): sweep traits apply their bonus through the vanilla
+`SWEEPING_DAMAGE_RATIO` attribute, matching how Minecraft 1.21 computes sweep damage. Custom sweep
+traits should extend `SweepWeaponTrait` or add their own attribute modifier the same way.
+
 ### Adding Traits via Tags (Recommended)
 
 Create a JSON file under `data/<namespace>/tags/spartan_weaponry_unofficial/weapon_traits/`. Material trait tags usually live under `materials/`:
@@ -258,6 +285,32 @@ Create a JSON file under `data/<namespace>/tags/spartan_weaponry_unofficial/weap
   ]
 }
 ```
+
+### Registering Custom Traits and Oil Effects (API 15)
+
+Weapon traits and oil effects live in real registries. Register your own entries with a
+`DeferredRegister` against the exposed registry keys:
+
+```java
+import net.neoforged.neoforge.registries.DeferredRegister;
+import org.xiyu.spartanweaponryunofficial.api.OilEffects;
+import org.xiyu.spartanweaponryunofficial.api.WeaponTraits;
+import org.xiyu.spartanweaponryunofficial.api.oil.OilEffect;
+import org.xiyu.spartanweaponryunofficial.api.trait.WeaponTrait;
+
+public static final DeferredRegister<WeaponTrait> TRAITS =
+        DeferredRegister.create(WeaponTraits.REGISTRY_KEY, "mymodid");
+public static final DeferredRegister<OilEffect> OILS =
+        DeferredRegister.create(OilEffects.REGISTRY_KEY, "mymodid");
+
+// In your mod constructor:
+// TRAITS.register(modBus);
+// OILS.register(modBus);
+```
+
+After registries are built you can look entries up with `WeaponTraits.registry()` and
+`OilEffects.registry()`. `WeaponTrait` exposes `getType()`, `getModId()`, `getQuality()`,
+`getLevel()`, and `getMagnitude()` for introspection.
 
 ---
 
